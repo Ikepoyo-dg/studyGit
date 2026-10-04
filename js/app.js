@@ -169,6 +169,7 @@ async function route() {
       case '/guide': await viewGuide(); break;
       case '/figures': viewFigures(ex, params.get('id')); break;
       case '/notes': await viewNotes(ex); break;
+      case '/stats': await viewStats(ex); break;
       case '/settings': await viewSettings(); break;
       default: go('/');
     }
@@ -222,6 +223,7 @@ async function viewMenu(ex) {
       <a class="menu-item" href="#/domains"><span class="ic">📚</span><span><b>分野別に学習</b><small>分野を選んで1問ずつ解説付きで解く</small></span></a>
       <a class="menu-item" href="#/mock"><span class="ic">⏱</span><span><b>模擬試験</b><small>${lastMock ? `前回 ${lastMock.score}点（${lastMock.score >= ex.passScore ? '合格ライン到達' : '合格ライン未達'}）` : '本番形式・時間制限あり'}</small></span></a>
       <a class="menu-item" href="#/weak"><span class="ic">★</span><span><b>苦手を学習</b><small>苦手マーク ${st.weak}問・前回不正解の問題</small></span></a>
+      <a class="menu-item" href="#/stats"><span class="ic">🔥</span><span><b>学習の記録</b><small>${statsMenuText(ex)}</small></span></a>
       <a class="menu-item" href="#/history"><span class="ic">📈</span><span><b>学習履歴</b><small>過去の正誤・模擬試験の結果</small></span></a>
       <a class="menu-item" href="#/figures"><span class="ic">🧩</span><span><b>図解で理解</b><small>マージ・フォークなどの仕組みを図で確認</small></span></a>
       <a class="menu-item" href="#/notes"><span class="ic">📝</span><span><b>用語メモ</b><small>${S.notes(ex.id).filter((n) => !n.done).length}件が未調査 ・ 気になった用語をあとで調べる</small></span></a>
@@ -550,6 +552,174 @@ async function viewQuestion(ex, id) {
   `, { back: '/history', sub: ex.code });
 }
 
+// ================= 画面: 学習の記録 =================
+const DAY = 86400000;
+const startOfDay = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+const md = (t) => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()}`; };
+const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
+const daysAgo = (t) => Math.round((startOfDay(Date.now()) - startOfDay(t)) / DAY);
+const agoText = (t) => { const n = daysAgo(t); return n === 0 ? '今日' : n === 1 ? '昨日' : `${n}日前`; };
+
+// 日ごとの集計 { 'YYYY-MM-DD': { n, c, mock, qids:Set } }
+function dailyStats(examId) {
+  const days = {};
+  for (const a of S.answerLog(examId)) {
+    const k = S.dayKey(a.t);
+    const d = (days[k] ||= { n: 0, c: 0, mock: 0, qids: new Set(), t: startOfDay(a.t) });
+    d.n++; d.c += a.c; if (a.m === 'mock') d.mock++; d.qids.add(a.qid);
+  }
+  return days;
+}
+function streakOf(days) {
+  let t = startOfDay(Date.now());
+  if (!days[S.dayKey(t)]) t -= DAY; // 今日まだでも、昨日まで続いていれば継続中
+  let n = 0;
+  while (days[S.dayKey(t)]) { n++; t -= DAY; }
+  return n;
+}
+function statsMenuText(ex) {
+  const days = dailyStats(ex.id);
+  const st = streakOf(days);
+  const today = days[S.dayKey(Date.now())];
+  if (today) return `今日 ${today.n}問 ・ ${st}日連続で学習中`;
+  return st ? `${st}日連続中 ・ 今日も続けましょう` : '学習した日をカレンダーで確認';
+}
+
+// 学習カレンダー（GitHubの草のようなヒートマップ）
+function heatmapSvg(days) {
+  const WEEKS = 17, CELL = 15, GAP = 3, LEFT = 22, TOP = 16;
+  const today = startOfDay(Date.now());
+  const start = today - (new Date(today).getDay() + (WEEKS - 1) * 7) * DAY;
+  const lv = (n) => (n === 0 ? 0 : n <= 5 ? 1 : n <= 10 ? 2 : n <= 20 ? 3 : 4);
+  let cells = '', months = '', lastMonth = -1;
+  for (let w = 0; w < WEEKS; w++) {
+    for (let d = 0; d < 7; d++) {
+      const t = start + (w * 7 + d) * DAY;
+      if (t > today) continue;
+      const x = LEFT + w * (CELL + GAP), y = TOP + d * (CELL + GAP);
+      const k = S.dayKey(t), s = days[k];
+      const n = s ? s.n : 0;
+      const tip = `${md(t)}（${WEEK[d]}）: ${n ? `${n}問・正答率${pct(s.c, s.n)}%` : '学習なし'}`;
+      cells += `<rect x="${x}" y="${y}" width="${CELL}" height="${CELL}" rx="3" class="hm l${lv(n)} ${t === today ? 'today' : ''}" data-tip="${esc(tip)}"/>`;
+      const m = new Date(t).getMonth();
+      if (d === 0 && m !== lastMonth) { months += `<text x="${x}" y="11" class="ax">${m + 1}月</text>`; lastMonth = m; }
+    }
+  }
+  const dl = [1, 3, 5].map((d) => `<text x="0" y="${TOP + d * (CELL + GAP) + 11}" class="ax">${WEEK[d]}</text>`).join('');
+  const w = LEFT + WEEKS * (CELL + GAP);
+  return `<svg viewBox="0 0 ${w} ${TOP + 7 * (CELL + GAP)}" class="viz-svg" role="img" aria-label="過去${WEEKS}週間の学習カレンダー">${months}${dl}${cells}</svg>
+    <div class="hm-legend"><span>少ない</span>${[0, 1, 2, 3, 4].map((l) => `<i class="l${l}"></i>`).join('')}<span>多い</span></div>`;
+}
+
+// 直近14日の回答数（正解・不正解の積み上げ）
+function dailyBarsSvg(days) {
+  const N = 14, W = 340, H = 170, L = 28, R = 6, T = 12, B = 26;
+  const today = startOfDay(Date.now());
+  const list = Array.from({ length: N }, (_, i) => { const t = today - (N - 1 - i) * DAY; const s = days[S.dayKey(t)]; return { t, n: s ? s.n : 0, c: s ? s.c : 0 }; });
+  const raw = Math.max(5, ...list.map((x) => x.n));
+  const step = raw <= 10 ? 5 : raw <= 50 ? 10 : raw <= 100 ? 20 : 50;
+  const max = Math.ceil(raw / step) * step;
+  const pw = W - L - R, ph = H - T - B, bw = pw / N;
+  const y = (v) => T + ph - (v / max) * ph;
+  let g = '';
+  for (let v = 0; v <= max; v += step) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ax">${v}</text>`;
+  let bars = '';
+  list.forEach((d, i) => {
+    const x = L + i * bw + 3, w = bw - 6;
+    const tip = `${md(d.t)}（${WEEK[new Date(d.t).getDay()]}）: ${d.n}問（正解${d.c}・不正解${d.n - d.c}）`;
+    if (d.c) bars += `<rect x="${x}" y="${y(d.c)}" width="${w}" height="${Math.max(0, y(0) - y(d.c))}" rx="2" class="b1"/>`;
+    if (d.n - d.c) {
+      const top = y(d.n), bottom = y(d.c) - (d.c ? 2 : 0);
+      bars += `<rect x="${x}" y="${top}" width="${w}" height="${Math.max(0, bottom - top)}" rx="2" class="b2"/>`;
+    }
+    bars += `<rect x="${L + i * bw}" y="${T}" width="${bw}" height="${ph + B}" class="hit" data-tip="${esc(tip)}"/>`;
+    if (i % 2 === 1 || i === N - 1) bars += `<text x="${L + i * bw + bw / 2}" y="${H - 8}" text-anchor="middle" class="ax">${md(d.t)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" class="viz-svg" role="img" aria-label="直近14日の回答数">${g}${bars}</svg>
+    <div class="viz-legend"><span><i class="b1"></i>正解</span><span><i class="b2"></i>不正解</span></div>`;
+}
+
+// 模擬試験の点数の推移
+function mockLineSvg(mocks, pass) {
+  const W = 340, H = 170, L = 34, R = 14, T = 14, B = 24;
+  const list = mocks.slice(-12);
+  const pw = W - L - R, ph = H - T - B;
+  const x = (i) => (list.length === 1 ? L + pw / 2 : L + (i / (list.length - 1)) * pw);
+  const y = (v) => T + ph - (v / 1000) * ph;
+  let g = '';
+  for (const v of [0, 500, 1000]) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ax">${v}</text>`;
+  g += `<line x1="${L}" x2="${W - R}" y1="${y(pass)}" y2="${y(pass)}" class="passline"/><text x="${L + 4}" y="${y(pass) - 5}" class="ax">合格ライン ${pass}</text>`;
+  const pts = list.map((m, i) => `${x(i)},${y(m.score)}`).join(' ');
+  let dots = '';
+  list.forEach((m, i) => {
+    dots += `<circle cx="${x(i)}" cy="${y(m.score)}" r="4.5" class="pt ${m.score >= pass ? 'ok' : ''}"/>`;
+    dots += `<circle cx="${x(i)}" cy="${y(m.score)}" r="14" class="hit" data-tip="${esc(`${md(m.date)}: ${m.score}点（${m.correct}/${m.total}問）`)}"/>`;
+  });
+  const last = list[list.length - 1];
+  const lbl = `<text x="${Math.min(x(list.length - 1), W - R - 20)}" y="${y(last.score) - 10}" text-anchor="middle" class="val">${last.score}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="viz-svg" role="img" aria-label="模擬試験の点数の推移">${g}${list.length > 1 ? `<polyline points="${pts}" class="ln1"/>` : ''}${dots}${lbl}</svg>`;
+}
+
+async function viewStats(ex) {
+  const qs = await questionsOf(ex.id);
+  const days = dailyStats(ex.id);
+  const keys = Object.keys(days).sort();
+  const v = S.visits();
+  const todayKey = S.dayKey(Date.now());
+  const lastStudyKey = [...keys].reverse().find((k) => k !== todayKey);
+  const streak = streakOf(days);
+  const total = keys.reduce((a, k) => a + days[k].n, 0);
+  const touched = new Set(keys.flatMap((k) => [...days[k].qids])).size;
+  const weekFrom = startOfDay(Date.now()) - 6 * DAY;
+  const week = keys.filter((k) => days[k].t >= weekFrom).reduce((a, k) => a + days[k].n, 0);
+  const today = days[todayKey];
+  const mocks = S.mocks(ex.id);
+
+  const msg = today
+    ? `今日は ${today.n}問 解きました。${streak >= 2 ? `${streak}日連続です！` : 'この調子で続けましょう。'}`
+    : streak ? `${streak}日連続で学習中です。今日も1問から続けましょう。`
+      : lastStudyKey ? `前回の学習は${agoText(days[lastStudyKey].t)}です。今日から再開しましょう。` : 'まずは1問解いてみましょう。';
+  const tile = (val, label, sub = '') => `<div class="tile"><b>${val}</b><span>${label}</span>${sub ? `<small>${sub}</small>` : ''}</div>`;
+
+  const recent = [...keys].reverse().slice(0, 10).map((k) => {
+    const d = days[k];
+    return `<tr><td>${md(d.t)}（${WEEK[new Date(d.t).getDay()]}）</td><td class="num">${d.n}</td><td class="num">${pct(d.c, d.n)}%</td><td class="num">${d.qids.size}</td></tr>`;
+  }).join('');
+
+  $app.innerHTML = page('学習の記録', `
+    <div class="card cheer">${esc(msg)}</div>
+    <div class="tiles">
+      ${tile(streak, '連続学習日数', streak ? '日' : '')}
+      ${tile(lastStudyKey ? agoText(days[lastStudyKey].t) : '—', '前回の学習日', lastStudyKey ? md(days[lastStudyKey].t) : '')}
+      ${tile(v.prev ? agoText(v.prev) : '今回が初回', '前回アプリを開いた日', v.prev ? md(v.prev) : '')}
+      ${tile(keys.length, '学習した日数', '日')}
+      ${tile(total, '累計の回答数', `今週 ${week}問`)}
+      ${tile(`${touched}<small>/${qs.length}</small>`, '取り組んだ問題', `${pct(touched, qs.length)}%`)}
+    </div>
+    <h2>学習カレンダー（過去17週）</h2>
+    <div class="card viz">${heatmapSvg(days)}</div>
+    <h2>直近14日の回答数</h2>
+    <div class="card viz">${dailyBarsSvg(days)}</div>
+    ${mocks.length ? `<h2>模擬試験の点数</h2><div class="card viz">${mockLineSvg(mocks, ex.passScore)}</div>` : ''}
+    <h2>最近の学習日</h2>
+    ${recent ? `<div class="card"><table class="viz-table"><thead><tr><th>日付</th><th class="num">回答数</th><th class="num">正答率</th><th class="num">問題数</th></tr></thead><tbody>${recent}</tbody></table></div>` : '<p class="card muted">まだ記録がありません。</p>'}
+    <p class="mini muted">グラフの棒やマスをタップすると詳しい数値が表示されます。記録は ${ex.code} の分だけを集計しています。</p>
+  `, { sub: ex.code });
+}
+
+// グラフのツールチップ（ホバー・タップ）
+function showTip(el, e) {
+  let tip = document.getElementById('viz-tip');
+  if (!tip) { tip = document.createElement('div'); tip.id = 'viz-tip'; tip.className = 'viz-tip'; document.body.appendChild(tip); }
+  tip.textContent = el.getAttribute('data-tip');
+  const r = el.getBoundingClientRect();
+  tip.style.display = 'block';
+  const tw = tip.offsetWidth;
+  tip.style.left = `${Math.max(8, Math.min(window.innerWidth - tw - 8, r.left + r.width / 2 - tw / 2))}px`;
+  tip.style.top = `${r.top + window.scrollY - tip.offsetHeight - 8}px`;
+}
+function hideTip() { const tip = document.getElementById('viz-tip'); if (tip) tip.style.display = 'none'; }
+
 // ================= 画面: 図解 =================
 function viewFigures(ex, focus) {
   const list = Object.entries(FIGURES).filter(([, f]) => f.exams.includes(ex.id));
@@ -799,6 +969,10 @@ async function onChange(e) {
 async function init() {
   document.addEventListener('click', onClick);
   document.addEventListener('change', onChange);
+  document.addEventListener('pointerover', (e) => { const el = e.target.closest?.('[data-tip]'); if (el) showTip(el, e); });
+  document.addEventListener('pointerout', (e) => { if (e.target.closest?.('[data-tip]')) hideTip(); });
+  document.addEventListener('pointerdown', (e) => { const el = e.target.closest?.('[data-tip]'); if (el) showTip(el, e); else hideTip(); });
+  window.addEventListener('hashchange', hideTip);
   // 問題文などで選択した文字を、メモの初期値に使う
   document.addEventListener('selectionchange', () => {
     const sel = window.getSelection();
@@ -814,6 +988,7 @@ async function init() {
   }
   if (!location.hash && S.getExam()) go('/menu');
   else route();
+  S.recordVisit();
   S.requestPersist();
   if (S.loadFailed()) toast('学習データを読み込めませんでした。データは退避済みです（設定画面を参照）');
   if ('serviceWorker' in navigator && location.protocol === 'https:') {

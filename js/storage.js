@@ -17,7 +17,7 @@ const MAX_MOCKS = 50;
 const MIGRATIONS = {};
 
 function empty() {
-  return { version: VERSION, exam: null, records: {}, mocks: [], notes: [] };
+  return { version: VERSION, exam: null, records: {}, mocks: [], notes: [], visits: { last: null, prev: null, days: [] } };
 }
 
 function migrate(d) {
@@ -29,7 +29,7 @@ function migrate(d) {
     v = d.version;
   }
   if (v > VERSION) throw new Error(`新しい形式（バージョン${v}）のデータです`);
-  return { ...empty(), ...d, records: d.records || {}, mocks: d.mocks || [], notes: d.notes || [] };
+  return { ...empty(), ...d, records: d.records || {}, mocks: d.mocks || [], notes: d.notes || [], visits: { ...empty().visits, ...(d.visits || {}) } };
 }
 
 function rescue(raw, reason) {
@@ -115,6 +115,35 @@ export function updateNote(id, patch) {
 export function deleteNote(id) {
   db.notes = db.notes.filter((x) => x.id !== id);
   save();
+}
+
+// ---- アプリの起動記録 ----
+// visits = { last: 最後に起動した時刻, prev: それより前の日に最後に起動した時刻, days: ['YYYY-MM-DD', ...] }
+export const dayKey = (t) => {
+  const d = new Date(t);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+export function recordVisit() {
+  const now = Date.now();
+  const v = db.visits;
+  // 同じ日に何度開いても「前回」は前日以前の起動日のまま
+  if (v.last && dayKey(v.last) !== dayKey(now)) v.prev = v.last;
+  v.last = now;
+  const k = dayKey(now);
+  if (!v.days.includes(k)) v.days.push(k);
+  if (v.days.length > 800) v.days.splice(0, v.days.length - 800);
+  save();
+}
+export const visits = () => db.visits;
+
+// 指定した試験の全回答（時刻つき）。学習の記録ページの集計に使う
+export function answerLog(examId) {
+  const out = [];
+  for (const [qid, r] of Object.entries(db.records)) {
+    if (!qid.startsWith(examId + '-')) continue;
+    for (const x of r.h) out.push({ qid, t: x.t, c: x.c, m: x.m });
+  }
+  return out.sort((a, b) => a.t - b.t);
 }
 
 // ---- 進行中のセッション（中断・再開用） ----
