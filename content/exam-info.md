@@ -23,7 +23,7 @@ updated: 2026-10-04
 
 1. Microsoft Learn のプロフィール作成（個人のMicrosoftアカウント推奨）
 2. 試験ページから Pearson VUE で予約（オンライン監督 or テストセンター）
-3. Microsoft Learn のラーニングパス＋公式学習ガイドで学習
+3. Microsoft Learn のラーニングパス＋公式学習ガイドで学習。本番の画面操作は [試験サンドボックス](https://aka.ms/examdemo) で事前に体験できる
 4. 受験 → 結果は即時、合格でデジタルバッジ発行
 
 ---

@@ -84,6 +84,28 @@ const weakBtn = (qid) =>
 const memoBtn = (qid = '') => `<button class="memo-btn" data-action="memo" data-id="${esc(qid)}" aria-label="用語をメモ">📝 メモ</button>`;
 const figBlock = (q) => (q.figure ? figureHtml(q.figure) : '');
 
+// 「Claudeに質問」: 問題・正解・解説を入れた質問文つきで Claude を開く（自動送信はされない）
+const CLAUDE_URL = 'https://claude.ai/new?q=';
+const L = 'ABCDEFGH';
+function askPrompt(ex, q, yours = null) {
+  const lines = [
+    `GitHub認定試験 ${ex.code}（${ex.name}）の勉強中です。次の問題と解説について質問させてください。`,
+    '',
+    `【問題】${q.question}`,
+    ...q.choices.map((c, i) => `${L[i]}. ${c}`),
+    `【正解】${q.answer.map((a) => L[a]).join(', ')}`,
+  ];
+  if (yours) lines.push(`【私の回答】${yours.length ? yours.map((a) => L[a]).join(', ') : '未回答'}`);
+  lines.push(`【解説】${q.explanation}`);
+  if (q.ref) lines.push(`【参考】${q.ref}`);
+  lines.push('', '【質問】');
+  return lines.join('\n');
+}
+const askBtn = (ex, q, yours = null) =>
+  `<a class="btn ghost small ask" href="${CLAUDE_URL}${encodeURIComponent(askPrompt(ex, q, yours))}" target="_blank" rel="noopener">💬 Claudeに質問 ↗</a>`;
+const askTermUrl = (ex, term) =>
+  CLAUDE_URL + encodeURIComponent(`GitHub認定試験 ${ex.code}（${ex.name}）の勉強中です。「${term}」について、初心者にも分かるように説明してください。試験で問われやすいポイントと、似た用語との違いも教えてください。`);
+
 // 試験ごとの集計（各問題の「最新の回答」で正答率を出す）
 function stats(qs, ex) {
   const by = {};
@@ -241,6 +263,7 @@ async function viewMockSetup(ex) {
       </fieldset>
       <p class="muted mini">本番の問題数は非公開のため、受験者の報告にもとづく目安です。合格ラインは${ex.passScore}点/1000点として採点します。</p>
       <button class="btn primary block" data-action="start-mock">開始する</button>
+      <p class="mini">本番の画面操作（問題の移動やさまざまな出題形式）は、Microsoft公式の<a href="https://aka.ms/examdemo" target="_blank" rel="noopener">試験サンドボックス ↗</a>で事前に体験できます。</p>
     </div>
     ${recent.length ? `<h2>最近の結果</h2>${recent.map((m) => `<div class="card qrow row between"><span>${fmtDate(m.date)}<br><span class="muted mini">${m.correct}/${m.total}問正解</span></span><b class="${m.score >= ex.passScore ? 'pass' : 'fail'}">${m.score}点</b></div>`).join('')}` : ''}
   `, { sub: ex.code });
@@ -339,7 +362,8 @@ async function viewQuiz() {
       <div class="result ${item.correct ? 'ok' : 'ng'}">${item.correct ? '○ 正解' : '× 不正解'}</div>
       <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>
         ${figBlock(q)}
-        ${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}</div>
+        ${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}
+        <div class="row">${askBtn(ex, q, item.sel.map((di) => item.order[di]))}</div></div>
       <div class="row between"><span class="mini muted">この問題の履歴 ${dots(q.id, 8)}（${h.filter((x) => x.c).length}/${h.length}回正解）</span>${weakBtn(q.id)}</div>
       <button class="btn primary block" data-action="next">${s.index < s.items.length - 1 ? '次の問題へ ›' : '結果を見る'}</button>`;
   }
@@ -439,7 +463,7 @@ async function viewSummary() {
         <p><b>正解:</b> ${q.answer.map((a) => rich(q.choices[a])).join(' / ')}</p>
         <p class="explain-text">${rich(q.explanation)}</p>
         ${figBlock(q)}
-        <div class="row end">${memoBtn(q.id)}${weakBtn(q.id)}</div>
+        <div class="row end">${askBtn(ex, q, it.sel.map((di) => it.order[di]))}${memoBtn(q.id)}${weakBtn(q.id)}</div>
       </details>`;
   }).join('');
 
@@ -495,7 +519,8 @@ async function viewQuestion(ex, id) {
     <p class="mini muted">${esc(domainName(ex, q.domain))} ・ ${esc(q.id)}</p>
     <div class="question">${rich(q.question)}</div>
     <div class="choices">${q.choices.map((c, i) => `<div class="choice static ${q.answer.includes(i) ? 'right' : ''}"><span class="mark">${q.answer.includes(i) ? '✔' : ''}</span><span>${rich(c)}</span></div>`).join('')}</div>
-    <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>${figBlock(q)}${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}</div>
+    <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>${figBlock(q)}${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}
+      <div class="row">${askBtn(ex, q)}</div></div>
     <div class="row between"><span class="row">${weakBtn(q.id)}${memoBtn(q.id)}</span><button class="btn primary small" data-action="solve-one" data-id="${esc(q.id)}">この問題を解く</button></div>
     <h2>回答履歴</h2>
     ${h.length ? `<div class="card">${h.map((x) => `<div class="row between line"><span>${fmtDate(x.t)}</span><span class="mini muted">${x.m === 'mock' ? '模擬試験' : '学習'}</span><span class="${x.c ? 'ok' : 'ng'}">${x.c ? '○ 正解' : '× 不正解'}</span></div>`).join('')}</div>` : '<p class="card muted">まだ回答していません。</p>'}
@@ -532,6 +557,7 @@ async function viewNotes(ex) {
         <div class="row">
           <a class="btn ghost small" href="https://www.google.com/search?q=${term}" target="_blank" rel="noopener">Google検索 ↗</a>
           <a class="btn ghost small" href="https://docs.github.com/ja/search?query=${term}" target="_blank" rel="noopener">GitHub Docs ↗</a>
+          <a class="btn ghost small" href="${askTermUrl(ex, n.term)}" target="_blank" rel="noopener">💬 Claudeに質問 ↗</a>
         </div>
         <div class="row">
           <button class="btn ${n.done ? 'ghost' : 'primary'} small" data-action="note-done" data-id="${n.id}">${n.done ? '未調査に戻す' : '✔ 調査済みにする'}</button>
