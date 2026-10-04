@@ -119,7 +119,7 @@ async function route() {
       case '/history': await viewHistory(ex); break;
       case '/q': await viewQuestion(ex, params.get('id')); break;
       case '/guide': await viewGuide(); break;
-      case '/settings': viewSettings(); break;
+      case '/settings': await viewSettings(); break;
       default: go('/');
     }
   } catch (e) {
@@ -479,11 +479,17 @@ async function viewGuide() {
 }
 
 // ================= 画面: 設定 =================
-function viewSettings() {
+async function viewSettings() {
+  const persisted = await S.isPersisted();
+  const persistText = persisted === true ? '有効（端末の容量不足でも自動削除されません）'
+    : persisted === false ? '未許可（ホーム画面に追加して使うと許可されやすくなります）' : '確認できません';
   $app.innerHTML = page('設定・データ管理', `
+    ${S.loadFailed() ? '<div class="card" style="border-color:var(--ng)"><b class="ng">学習データを読み込めませんでした</b><p class="mini">元のデータは消さずに退避してあります。この状態では新しい記録は保存されません。</p></div>' : ''}
     <div class="card">
       <b>学習データについて</b>
-      <p class="mini">正誤の履歴と苦手マークは、この端末のブラウザ内に保存されます。機種変更やブラウザのデータ削除の前にバックアップしてください。</p>
+      <p class="mini">正誤の履歴と苦手マークは、この端末のブラウザ内に保存されます。アプリを更新しても消えません。</p>
+      <p class="mini">永続保存: ${persistText}</p>
+      <p class="mini">ブラウザのサイトデータ削除・アンインストール・機種変更では消えるため、その前にバックアップしてください。</p>
       <div class="row">
         <button class="btn primary small" data-action="export">バックアップを保存</button>
         <label class="btn ghost small">バックアップから復元<input type="file" accept="application/json,.json" id="import" hidden></label>
@@ -623,6 +629,8 @@ async function init() {
   }
   if (!location.hash && S.getExam()) go('/menu');
   else route();
+  S.requestPersist();
+  if (S.loadFailed()) toast('学習データを読み込めませんでした。データは退避済みです（設定画面を参照）');
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     navigator.serviceWorker.register('sw.js').catch((err) => console.warn('SW登録失敗', err));
   }

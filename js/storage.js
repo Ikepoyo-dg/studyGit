@@ -1,24 +1,64 @@
 // 学習データの保存（端末のブラウザ内 localStorage）
+//
+// 【学習履歴を消さないためのルール】
+// - KEY（保存先の名前）は絶対に変更しない。変えると過去の履歴が読めなくなる。
+// - データ形式を変えるときは VERSION を上げ、MIGRATIONS に「旧形式 → 新形式」の変換を追加する。
+//   古いデータを捨てる処理は書かない。
+// - 問題の id（data/questions/*.json）は一度公開したら変更しない。履歴は id に紐づいている。
 const KEY = 'gitStudy.v1';
 const SESSION_KEY = 'gitStudy.session';
+const RESCUE_KEY = 'gitStudy.rescue'; // 読み込めなかったデータの退避先
+const VERSION = 1;
 const MAX_HISTORY = 50;
 const MAX_MOCKS = 50;
 
+// 形式の変換: MIGRATIONS[n] は「バージョン n のデータ」を「n + 1」に変換する関数
+// 例) 2: (d) => ({ ...d, version: 3, settings: {} }),
+const MIGRATIONS = {};
+
 function empty() {
-  return { version: 1, exam: null, records: {}, mocks: [] };
+  return { version: VERSION, exam: null, records: {}, mocks: [] };
 }
 
-function load() {
+function migrate(d) {
+  let v = Number(d.version) || 1;
+  while (v < VERSION) {
+    const step = MIGRATIONS[v];
+    if (!step) throw new Error(`バージョン${v}からの変換がありません`);
+    d = step(d);
+    v = d.version;
+  }
+  if (v > VERSION) throw new Error(`新しい形式（バージョン${v}）のデータです`);
+  return { ...empty(), ...d, records: d.records || {}, mocks: d.mocks || [] };
+}
+
+function rescue(raw, reason) {
+  // 読めないデータも捨てずに退避しておく（後から手動で復旧できるように）
   try {
-    const d = JSON.parse(localStorage.getItem(KEY));
-    if (d && d.version === 1) return { ...empty(), ...d };
-  } catch (e) { /* 読めない場合は初期状態 */ }
-  return empty();
+    localStorage.setItem(RESCUE_KEY, JSON.stringify({ at: Date.now(), reason: String(reason), raw }));
+  } catch (e) { /* noop */ }
+}
+
+let readOnly = false; // 読み込みに失敗したときは上書き保存しない
+
+function load() {
+  let raw = null;
+  try { raw = localStorage.getItem(KEY); } catch (e) { return empty(); }
+  if (!raw) return empty();
+  try {
+    return migrate(JSON.parse(raw));
+  } catch (e) {
+    console.error('学習データを読み込めませんでした', e);
+    rescue(raw, e.message);
+    readOnly = true;
+    return empty();
+  }
 }
 
 let db = load();
 
 function save() {
+  if (readOnly) return;
   try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { console.warn('保存に失敗', e); }
 }
 
@@ -74,11 +114,26 @@ export function clearSession() {
 export const exportData = () => JSON.stringify(db, null, 2);
 export function importData(text) {
   const d = JSON.parse(text);
-  if (!d || d.version !== 1 || typeof d.records !== 'object') throw new Error('このアプリのバックアップ形式ではありません');
-  db = { ...empty(), ...d };
+  if (!d || typeof d.records !== 'object') throw new Error('このアプリのバックアップ形式ではありません');
+  db = migrate(d);
+  readOnly = false;
   save();
 }
+// 端末の容量不足などでブラウザがデータを自動削除しないよう「永続保存」を要求する
+export async function requestPersist() {
+  try {
+    if (!navigator.storage?.persist) return null;
+    if (await navigator.storage.persisted()) return true;
+    return await navigator.storage.persist();
+  } catch (e) { return null; }
+}
+export async function isPersisted() {
+  try { return navigator.storage?.persisted ? await navigator.storage.persisted() : null; } catch (e) { return null; }
+}
+export const loadFailed = () => readOnly;
+
 export function resetAll() {
+  readOnly = false;
   const exam = db.exam;
   db = empty();
   db.exam = exam;

@@ -1,6 +1,9 @@
 // オフライン対応用 Service Worker
-// 方式: stale-while-revalidate（キャッシュを即返しつつ、裏で最新版を取得して次回に反映）
-const CACHE = 'git-study-v2';
+// 方式: ネットワーク優先（通信できるときは常に最新版を取得してキャッシュを更新し、
+//       オフラインや通信が遅いときはキャッシュを使う）
+// ※ キャッシュはアプリのファイルだけ。学習履歴（localStorage）には一切触れない。
+const CACHE = 'git-study-v3';
+const NETWORK_TIMEOUT_MS = 4000;
 const ASSETS = [
   './',
   'index.html',
@@ -31,16 +34,20 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
-  e.respondWith(
-    caches.open(CACHE).then(async (cache) => {
-      const cached = await cache.match(e.request, { ignoreSearch: true });
-      const network = fetch(e.request)
-        .then((res) => {
-          if (res.ok) cache.put(e.request, res.clone());
-          return res;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
-  );
+  e.respondWith(networkFirst(e.request));
 });
+
+async function networkFirst(request) {
+  const cache = await caches.open(CACHE);
+  const network = fetch(request, { cache: 'no-cache' }).then((res) => {
+    if (res.ok) cache.put(request, res.clone());
+    return res;
+  });
+  const timeout = new Promise((resolve) => setTimeout(resolve, NETWORK_TIMEOUT_MS, null));
+  try {
+    const res = await Promise.race([network, timeout]);
+    if (res) return res;
+  } catch (e) { /* オフライン */ }
+  const cached = await cache.match(request, { ignoreSearch: true });
+  return cached || network;
+}

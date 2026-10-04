@@ -1,6 +1,6 @@
 // 問題データの検証スクリプト
 // 使い方: node scripts/validate.mjs
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
 const root = new URL('../', import.meta.url);
 const read = (p) => JSON.parse(readFileSync(new URL(p, root), 'utf8'));
@@ -34,6 +34,25 @@ for (const ex of exams) {
 
   console.log(`${ex.code}: ${qs.length}問`);
   for (const d of ex.domains) console.log(`  - ${d.name}: ${count[d.id]}問`);
+}
+
+// 公開済みIDのチェック（IDを変えたり消したりすると、その問題の学習履歴が失われるため）
+const idsFile = new URL('data/published-ids.txt', root);
+const published = existsSync(idsFile)
+  ? readFileSync(idsFile, 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
+  : [];
+for (const id of published) {
+  if (!ids.has(id)) errors.push(`公開済みの問題ID ${id} が見つかりません（IDの変更・削除は学習履歴が消える原因になります）`);
+}
+const added = [...ids].filter((id) => !published.includes(id));
+if (added.length) {
+  if (process.argv.includes('--update-ids')) {
+    const text = readFileSync(idsFile, 'utf8');
+    writeFileSync(idsFile, text.replace(/\n?$/, '\n') + added.join('\n') + '\n');
+    console.log(`\n公開済みID一覧に${added.length}件を追加しました`);
+  } else {
+    console.log(`\n新しい問題が${added.length}件あります。node scripts/validate.mjs --update-ids で公開済みID一覧に追加してください`);
+  }
 }
 
 if (errors.length) {
