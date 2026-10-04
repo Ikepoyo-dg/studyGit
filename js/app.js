@@ -1,8 +1,9 @@
 import * as S from './storage.js';
 import { renderMarkdown } from './md.js';
+import { FIGURES, figureHtml } from './figures.js';
 
 const $app = document.getElementById('app');
-const state = { exams: [], questions: {}, timer: null, histFilter: 'all' };
+const state = { exams: [], questions: {}, timer: null, histFilter: 'all', noteFilter: 'todo', lastSel: '' };
 
 // ================= ユーティリティ =================
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -80,6 +81,9 @@ function dots(qid, n = 5) {
 const weakBtn = (qid) =>
   `<button class="weak ${S.isWeak(qid) ? 'on' : ''}" data-action="weak" data-id="${esc(qid)}" aria-pressed="${S.isWeak(qid)}">${S.isWeak(qid) ? '★ 苦手' : '☆ 苦手'}</button>`;
 
+const memoBtn = (qid = '') => `<button class="memo-btn" data-action="memo" data-id="${esc(qid)}" aria-label="用語をメモ">📝 メモ</button>`;
+const figBlock = (q) => (q.figure ? figureHtml(q.figure) : '');
+
 // 試験ごとの集計（各問題の「最新の回答」で正答率を出す）
 function stats(qs, ex) {
   const by = {};
@@ -119,6 +123,8 @@ async function route() {
       case '/history': await viewHistory(ex); break;
       case '/q': await viewQuestion(ex, params.get('id')); break;
       case '/guide': await viewGuide(); break;
+      case '/figures': viewFigures(ex, params.get('id')); break;
+      case '/notes': await viewNotes(ex); break;
       case '/settings': await viewSettings(); break;
       default: go('/');
     }
@@ -173,6 +179,8 @@ async function viewMenu(ex) {
       <a class="menu-item" href="#/mock"><span class="ic">⏱</span><span><b>模擬試験</b><small>${lastMock ? `前回 ${lastMock.score}点（${lastMock.score >= ex.passScore ? '合格ライン到達' : '合格ライン未達'}）` : '本番形式・時間制限あり'}</small></span></a>
       <a class="menu-item" href="#/weak"><span class="ic">★</span><span><b>苦手を学習</b><small>苦手マーク ${st.weak}問・前回不正解の問題</small></span></a>
       <a class="menu-item" href="#/history"><span class="ic">📈</span><span><b>学習履歴</b><small>過去の正誤・模擬試験の結果</small></span></a>
+      <a class="menu-item" href="#/figures"><span class="ic">🧩</span><span><b>図解で理解</b><small>マージ・フォークなどの仕組みを図で確認</small></span></a>
+      <a class="menu-item" href="#/notes"><span class="ic">📝</span><span><b>用語メモ</b><small>${S.notes(ex.id).filter((n) => !n.done).length}件が未調査 ・ 気になった用語をあとで調べる</small></span></a>
       <a class="menu-item" href="#/guide"><span class="ic">ℹ️</span><span><b>試験ガイド</b><small>出題範囲・受験ステップ</small></span></a>
     </nav>
     <div class="row center"><a class="btn ghost small" href="#/">試験を切り替える</a><a class="btn ghost small" href="#/settings">設定</a></div>
@@ -330,6 +338,7 @@ async function viewQuiz() {
     footer = `
       <div class="result ${item.correct ? 'ok' : 'ng'}">${item.correct ? '○ 正解' : '× 不正解'}</div>
       <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>
+        ${figBlock(q)}
         ${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}</div>
       <div class="row between"><span class="mini muted">この問題の履歴 ${dots(q.id, 8)}（${h.filter((x) => x.c).length}/${h.length}回正解）</span>${weakBtn(q.id)}</div>
       <button class="btn primary block" data-action="next">${s.index < s.items.length - 1 ? '次の問題へ ›' : '結果を見る'}</button>`;
@@ -339,7 +348,7 @@ async function viewQuiz() {
     <header class="bar">
       <button class="back" data-action="leave" aria-label="中断">‹</button>
       <div class="bar-title"><h1>${esc(s.title)}</h1><small>${s.index + 1} / ${s.items.length}</small></div>
-      ${mock ? '<span class="timer" id="timer"></span>' : weakBtn(q.id)}
+      ${memoBtn(q.id)}${mock ? '<span class="timer" id="timer"></span>' : weakBtn(q.id)}
     </header>
     <div class="progress"><span style="width:${pct(s.index + 1, s.items.length)}%"></span></div>
     <section class="content">
@@ -429,7 +438,8 @@ async function viewSummary() {
         <p><b>あなたの回答:</b> ${yours.length ? yours.map(rich).join(' / ') : '（未回答）'}</p>
         <p><b>正解:</b> ${q.answer.map((a) => rich(q.choices[a])).join(' / ')}</p>
         <p class="explain-text">${rich(q.explanation)}</p>
-        <div class="row end">${weakBtn(q.id)}</div>
+        ${figBlock(q)}
+        <div class="row end">${memoBtn(q.id)}${weakBtn(q.id)}</div>
       </details>`;
   }).join('');
 
@@ -485,11 +495,82 @@ async function viewQuestion(ex, id) {
     <p class="mini muted">${esc(domainName(ex, q.domain))} ・ ${esc(q.id)}</p>
     <div class="question">${rich(q.question)}</div>
     <div class="choices">${q.choices.map((c, i) => `<div class="choice static ${q.answer.includes(i) ? 'right' : ''}"><span class="mark">${q.answer.includes(i) ? '✔' : ''}</span><span>${rich(c)}</span></div>`).join('')}</div>
-    <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}</div>
-    <div class="row between">${weakBtn(q.id)}<button class="btn primary small" data-action="solve-one" data-id="${esc(q.id)}">この問題を解く</button></div>
+    <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>${figBlock(q)}${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}</div>
+    <div class="row between"><span class="row">${weakBtn(q.id)}${memoBtn(q.id)}</span><button class="btn primary small" data-action="solve-one" data-id="${esc(q.id)}">この問題を解く</button></div>
     <h2>回答履歴</h2>
     ${h.length ? `<div class="card">${h.map((x) => `<div class="row between line"><span>${fmtDate(x.t)}</span><span class="mini muted">${x.m === 'mock' ? '模擬試験' : '学習'}</span><span class="${x.c ? 'ok' : 'ng'}">${x.c ? '○ 正解' : '× 不正解'}</span></div>`).join('')}</div>` : '<p class="card muted">まだ回答していません。</p>'}
   `, { back: '/history', sub: ex.code });
+}
+
+// ================= 画面: 図解 =================
+function viewFigures(ex, focus) {
+  const list = Object.entries(FIGURES).filter(([, f]) => f.exams.includes(ex.id));
+  const toc = list.map(([id, f]) => `<a class="chip" href="#fig-${id}" data-action="scroll-fig" data-id="${id}">${esc(f.title)}</a>`).join('');
+  $app.innerHTML = page('図解で理解', `
+    <div class="chips">${toc}</div>
+    ${list.map(([id]) => `<div class="card" id="fig-${id}">${figureHtml(id)}</div>`).join('')}
+    ${list.length ? '' : '<p class="card muted">この試験の図解はまだありません。</p>'}
+  `, { sub: ex.code });
+  if (focus) document.getElementById(`fig-${focus}`)?.scrollIntoView();
+}
+
+// ================= 画面: 用語メモ =================
+async function viewNotes(ex) {
+  const qs = await questionsOf(ex.id);
+  const all = S.notes(ex.id);
+  const f = state.noteFilter;
+  const filters = { todo: `未調査（${all.filter((n) => !n.done).length}）`, done: `調査済み（${all.filter((n) => n.done).length}）`, all: 'すべて' };
+  const shown = all.filter((n) => (f === 'todo' ? !n.done : f === 'done' ? n.done : true));
+  const card = (n) => {
+    const q = n.qid && qs.find((x) => x.id === n.qid);
+    const term = encodeURIComponent(n.term);
+    return `
+      <div class="card note ${n.done ? 'done' : ''}">
+        <div class="row between"><b class="note-term">${esc(n.term)}</b><span class="mini muted">${fmtDate(n.t)}</span></div>
+        ${n.memo ? `<p class="note-memo">${esc(n.memo).replace(/\n/g, '<br>')}</p>` : ''}
+        ${q ? `<a class="mini" href="#/q?id=${encodeURIComponent(q.id)}">関連する問題: ${esc(q.question.slice(0, 40))}${q.question.length > 40 ? '…' : ''}</a>` : ''}
+        <div class="row">
+          <a class="btn ghost small" href="https://www.google.com/search?q=${term}" target="_blank" rel="noopener">Google検索 ↗</a>
+          <a class="btn ghost small" href="https://docs.github.com/ja/search?query=${term}" target="_blank" rel="noopener">GitHub Docs ↗</a>
+        </div>
+        <div class="row">
+          <button class="btn ${n.done ? 'ghost' : 'primary'} small" data-action="note-done" data-id="${n.id}">${n.done ? '未調査に戻す' : '✔ 調査済みにする'}</button>
+          <button class="btn ghost small" data-action="note-edit" data-id="${n.id}">編集</button>
+          <button class="btn danger small" data-action="note-del" data-id="${n.id}">削除</button>
+        </div>
+      </div>`;
+  };
+  $app.innerHTML = page('用語メモ', `
+    <button class="btn primary block" data-action="memo">＋ 用語をメモする</button>
+    <p class="mini muted">問題を解いている最中は、画面上部の「📝 メモ」から記録できます。問題文の用語を長押しで選択してから押すと、その用語が入力されます。</p>
+    <div class="chips">${Object.entries(filters).map(([k, v]) => `<button class="chip ${f === k ? 'on' : ''}" data-action="note-filter" data-id="${k}">${v}</button>`).join('')}</div>
+    ${shown.length ? shown.map(card).join('') : '<p class="card muted">メモはまだありません。</p>'}
+  `, { sub: ex.code });
+}
+
+// メモの入力ダイアログ（新規・編集）
+function noteDialog({ term = '', memo = '', title = '用語をメモ' } = {}) {
+  return new Promise((resolve) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'modal';
+    wrap.innerHTML = `<form class="modal-box note-form" role="dialog" aria-modal="true">
+      <b>${esc(title)}</b>
+      <label class="field">用語・気になったこと<input name="term" value="${esc(term)}" maxlength="200" required autocomplete="off"></label>
+      <label class="field">メモ（調べた内容など・任意）<textarea name="memo" rows="4" maxlength="2000">${esc(memo)}</textarea></label>
+      <div class="row"><button type="button" class="btn ghost" data-r="0">キャンセル</button><button type="submit" class="btn primary">保存</button></div>
+    </form>`;
+    const form = wrap.querySelector('form');
+    const close = (v) => { wrap.remove(); resolve(v); };
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const t = form.term.value.trim();
+      if (!t) return form.term.focus();
+      close({ term: t, memo: form.memo.value.trim() });
+    });
+    wrap.addEventListener('click', (e) => { if (e.target === wrap || e.target.closest('[data-r="0"]')) close(null); });
+    document.body.appendChild(wrap);
+    (term ? form.memo : form.term).focus();
+  });
 }
 
 // ================= 画面: 試験ガイド =================
@@ -544,6 +625,34 @@ async function onClick(e) {
     return toast(on ? '苦手に追加しました' : '苦手から外しました');
   }
   if (a === 'hist-filter') { state.histFilter = id; return route(); }
+  if (a === 'note-filter') { state.noteFilter = id; return route(); }
+  if (a === 'scroll-fig') { e.preventDefault(); document.getElementById(`fig-${id}`)?.scrollIntoView({ behavior: 'smooth' }); return; }
+  if (a === 'memo') {
+    const pre = state.lastSel;
+    state.lastSel = '';
+    const r = await noteDialog({ term: pre });
+    if (!r) return;
+    S.addNote({ exam: ex.id, qid: id || null, term: r.term, memo: r.memo });
+    toast('メモしました');
+    if (location.hash.startsWith('#/notes') || location.hash.startsWith('#/menu')) route();
+    return;
+  }
+  if (a === 'note-done') {
+    const n = S.notes().find((x) => x.id === id);
+    if (n) S.updateNote(id, { done: !n.done });
+    return route();
+  }
+  if (a === 'note-edit') {
+    const n = S.notes().find((x) => x.id === id);
+    if (!n) return;
+    const r = await noteDialog({ term: n.term, memo: n.memo, title: 'メモを編集' });
+    if (r) { S.updateNote(id, r); route(); }
+    return;
+  }
+  if (a === 'note-del') {
+    if (await confirmDialog('このメモを削除しますか？', '削除する')) { S.deleteNote(id); route(); }
+    return;
+  }
   if (a === 'discard') {
     if (await confirmDialog('途中のセッションを破棄しますか？', '破棄する')) { S.clearSession(); route(); }
     return;
@@ -641,6 +750,12 @@ async function onChange(e) {
 async function init() {
   document.addEventListener('click', onClick);
   document.addEventListener('change', onChange);
+  // 問題文などで選択した文字を、メモの初期値に使う
+  document.addEventListener('selectionchange', () => {
+    const sel = window.getSelection();
+    const t = sel ? sel.toString().trim() : '';
+    if (t && t.length <= 200 && sel.anchorNode && $app.contains(sel.anchorNode)) state.lastSel = t;
+  });
   window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
   try {
     state.exams = (await loadJSON('data/exams.json')).exams;

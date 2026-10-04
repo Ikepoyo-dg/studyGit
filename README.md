@@ -10,6 +10,8 @@ Androidのブラウザで開いて「ホーム画面に追加」すると、ア�
 - **模擬試験：** 本番形式（GH-900 50問・GH-300 65問、各100分）とハーフを用意。分野の比重に合わせて出題し、最後にまとめて採点（1000点換算）
 - **苦手を学習：** 「☆ 苦手」でマークした問題、または前回まちがえた問題だけを出題
 - **学習履歴：** 問題ごとの過去の正誤、分野別の正答率、模擬試験の結果
+- **図解で理解：** マージ、フォーク、fetch/pullなどの仕組みを図で確認（関連する問題の解説にも表示）
+- **用語メモ：** 解いている最中に気になった用語を記録し、あとからGoogleやGitHub Docsで調べられる
 - **試験ガイド：** 出題範囲や受験ステップ（`content/exam-info.md`）
 - **バックアップ：** 学習データをJSONで保存・復元
 
@@ -23,6 +25,7 @@ css/style.css           見た目
 js/app.js               画面と操作のロジック
 js/storage.js           学習データの保存
 js/md.js                試験ガイド用のMarkdown表示
+js/figures.js           図解（SVG）
 data/exams.json         試験と出題分野の定義
 data/questions/*.json   問題データ
 content/exam-info.md    試験ガイド
@@ -50,11 +53,13 @@ python3 -m http.server 8000
   "choices": ["選択肢A", "選択肢B", "選択肢C", "選択肢D"],
   "answer": [0],
   "explanation": "解説",
-  "ref": "https://docs.github.com/ja/..."
+  "ref": "https://docs.github.com/ja/...",
+  "figure": "fork-pr"
 }
 ```
 
 - `domain` は `data/exams.json` の分野ID
+- `figure`（任意）は `js/figures.js` の図解ID。解説に図が表示されます
 - `answer` は正解の選択肢の番号（0始まり）。複数正解なら `[0, 2]` とし、問題文に「2つ選んでください」と書く
 - 追加したら `node scripts/validate.mjs --update-ids` でチェックし、公開済みID一覧（`data/published-ids.txt`）に追記
 

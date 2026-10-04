@@ -6,6 +6,7 @@ const root = new URL('../', import.meta.url);
 const read = (p) => JSON.parse(readFileSync(new URL(p, root), 'utf8'));
 
 const { exams } = read('data/exams.json');
+const { FIGURES } = await import(new URL('js/figures.js', root));
 const errors = [];
 const ids = new Set();
 
@@ -29,6 +30,7 @@ for (const ex of exams) {
     else if (new Set(q.answer).size !== q.answer.length) errors.push(`${where} answer が重複しています`);
     if (q.answer?.length > 1 && !/[2-9２-９]つ選/.test(q.question)) errors.push(`${where} 複数正解なのに「○つ選んで」の記載がありません`);
     if (!q.explanation?.trim()) errors.push(`${where} 解説が空です`);
+    if (q.figure && !FIGURES[q.figure]) errors.push(`${where} 図解 ${q.figure} が js/figures.js にありません`);
     if (q.ref && !/^https:\/\//.test(q.ref)) errors.push(`${where} ref はhttpsのURLにしてください`);
   }
 

@@ -187,6 +187,40 @@ fieldset.choices-stack legend { font-weight: 700; margin-bottom: 6px; }
 fieldset.choices-stack label { display: flex; gap: 10px; align-items: center; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
 fieldset.choices-stack label:has(input:checked) { border-color: var(--primary); background: var(--sel); }
 
+/* ---- 図解 ---- */
+.fig { margin: 12px 0 4px; }
+.fig svg { width: 100%; height: auto; display: block; max-width: 460px; margin: 0 auto; }
+.fig-title { font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+.fig-cap { font-size: .85rem; color: var(--muted); margin: 6px 0 0; }
+.fig .bx { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+.fig .bx.acc { stroke: var(--primary); }
+.fig .t { fill: var(--text); font-size: 13px; font-weight: 700; }
+.fig .s { fill: var(--muted); font-size: 11px; }
+.fig .lb { fill: var(--primary); font-size: 12px; font-weight: 700; }
+.fig .ln { stroke: var(--muted); stroke-width: 2.5; fill: none; }
+.fig .ln.br { stroke: var(--ok); }
+.fig .ar { stroke: var(--primary); stroke-width: 2; fill: none; }
+.fig .ahp { fill: var(--primary); }
+.fig .dash { stroke: var(--border); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.fig .cm { fill: var(--surface); stroke: var(--muted); stroke-width: 2.5; }
+.fig .cm.br { stroke: var(--ok); }
+.fig .cm.m { fill: var(--primary); stroke: var(--primary); }
+.fig .ct { fill: var(--text); font-size: 10px; font-weight: 700; }
+.fig .ct.m { fill: var(--primary-text); }
+.fig .code { fill: var(--text); font-size: 13px; }
+.fig .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+
+/* ---- メモ ---- */
+.memo-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 6px 10px; font: inherit; font-size: .85rem; cursor: pointer; white-space: nowrap; }
+.note-term { font-size: 1.05rem; word-break: break-word; }
+.note-memo { margin: 6px 0; font-size: .92rem; }
+.note.done { opacity: .7; }
+.note .row { margin: 8px 0 0; }
+.note-form { display: grid; gap: 12px; }
+.field { display: grid; gap: 4px; font-size: .85rem; color: var(--muted); }
+.field input, .field textarea { font: inherit; font-size: 16px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; width: 100%; }
+.field textarea { resize: vertical; }
+
 /* ---- Markdown ---- */
 .md h1 { font-size: 1.4rem; }
 .md h2 { font-size: 1.15rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 4px; }

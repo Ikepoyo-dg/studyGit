@@ -44,7 +44,8 @@
     "answer": [
       1
     ],
-    "explanation": "`git add` は変更を「次のコミットに含める候補」としてステージングエリア（インデックス）に登録します。その後 `git commit` で記録します。リモートへの送信は `git push`、履歴の表示は `git log` です。"
+    "explanation": "`git add` は変更を「次のコミットに含める候補」としてステージングエリア（インデックス）に登録します。その後 `git commit` で記録します。リモートへの送信は `git push`、履歴の表示は `git log` です。",
+    "figure": "areas"
   },
   {
     "id": "gh900-d1-004",
@@ -59,7 +60,8 @@
     "answer": [
       1
     ],
-    "explanation": "`git commit -m \"メッセージ\"` でステージ済みの変更がスナップショットとして履歴に記録されます。`git push` はローカルのコミットをリモートへ送信、`git stash` は変更を一時退避、`git fetch` はリモートの更新を取得するコマンドです。"
+    "explanation": "`git commit -m \"メッセージ\"` でステージ済みの変更がスナップショットとして履歴に記録されます。`git push` はローカルのコミットをリモートへ送信、`git stash` は変更を一時退避、`git fetch` はリモートの更新を取得するコマンドです。",
+    "figure": "areas"
   },
   {
     "id": "gh900-d1-005",
@@ -74,7 +76,8 @@
     "answer": [
       1
     ],
-    "explanation": "ブランチは特定のコミットを指す軽量なポインタで、メインの作業ラインから分かれて独立して開発を進められます。作業が終わったらPull Requestなどを通じて元のブランチにマージします。"
+    "explanation": "ブランチは特定のコミットを指す軽量なポインタで、メインの作業ラインから分かれて独立して開発を進められます。作業が終わったらPull Requestなどを通じて元のブランチにマージします。",
+    "figure": "branch-merge"
   },
   {
     "id": "gh900-d1-006",
@@ -89,7 +92,8 @@
     "answer": [
       1
     ],
-    "explanation": "`git pull` は `git fetch`（取得）と `git merge`（統合）をまとめて行います。`git fetch` だけでは取得のみで、作業中のブランチは変更されません。"
+    "explanation": "`git pull` は `git fetch`（取得）と `git merge`（統合）をまとめて行います。`git fetch` だけでは取得のみで、作業中のブランチは変更されません。",
+    "figure": "fetch-pull"
   },
   {
     "id": "gh900-d1-007",
@@ -104,7 +108,8 @@
     "answer": [
       1
     ],
-    "explanation": "`git clone` はリモートリポジトリをすべての履歴とブランチ情報を含めてローカルに複製し、元のリポジトリを `origin` というリモートとして登録します。GitHub上で自分のアカウントにコピーを作るのは「フォーク」です。"
+    "explanation": "`git clone` はリモートリポジトリをすべての履歴とブランチ情報を含めてローカルに複製し、元のリポジトリを `origin` というリモートとして登録します。GitHub上で自分のアカウントにコピーを作るのは「フォーク」です。",
+    "figure": "fork-pr"
   },
   {
     "id": "gh900-d1-008",
@@ -152,7 +157,8 @@
     "answer": [
       0
     ],
-    "explanation": "同じ行を異なるブランチで別々に変更すると、Gitはどちらを採用すべきか自動で判断できず、コンフリクトになります。ファイル内の `<<<<<<<` `=======` `>>>>>>>` の部分を手動で編集して解消し、コミットします。"
+    "explanation": "同じ行を異なるブランチで別々に変更すると、Gitはどちらを採用すべきか自動で判断できず、コンフリクトになります。ファイル内の `<<<<<<<` `=======` `>>>>>>>` の部分を手動で編集して解消し、コミットします。",
+    "figure": "conflict"
   },
   {
     "id": "gh900-d1-011",
@@ -168,7 +174,8 @@
       0
     ],
     "explanation": "GitHub Flowは、mainから作業用のブランチを作り、変更をコミットし、Pull Requestを作ってレビューを受け、承認後にmainへマージする軽量なワークフローです。マージ後は作業用ブランチを削除します。",
-    "ref": "https://docs.github.com/ja/get-started/using-github/github-flow"
+    "ref": "https://docs.github.com/ja/get-started/using-github/github-flow",
+    "figure": "github-flow"
   },
   {
     "id": "gh900-d1-012",
@@ -199,7 +206,8 @@
     "answer": [
       0
     ],
-    "explanation": "`git status` は、ステージ済みの変更、未ステージの変更、未追跡のファイルを一覧表示します。迷ったらまず `git status` で状態を確認するのが基本です。`git log` はコミット履歴、`git init` は新しいリポジトリの作成です。"
+    "explanation": "`git status` は、ステージ済みの変更、未ステージの変更、未追跡のファイルを一覧表示します。迷ったらまず `git status` で状態を確認するのが基本です。`git log` はコミット履歴、`git init` は新しいリポジトリの作成です。",
+    "figure": "areas"
   },
   {
     "id": "gh900-d1-014",
@@ -229,7 +237,8 @@
     "answer": [
       0
     ],
-    "explanation": "`git switch -c ブランチ名`（または従来の `git checkout -b ブランチ名`）で、ブランチの作成と切り替えを同時に行えます。`git branch -d` はブランチの削除、`git merge` は指定したブランチを現在のブランチに統合するコマンドです。"
+    "explanation": "`git switch -c ブランチ名`（または従来の `git checkout -b ブランチ名`）で、ブランチの作成と切り替えを同時に行えます。`git branch -d` はブランチの削除、`git merge` は指定したブランチを現在のブランチに統合するコマンドです。",
+    "figure": "branch-merge"
   },
   {
     "id": "gh900-d1-016",
@@ -244,7 +253,8 @@
     "answer": [
       0
     ],
-    "explanation": "`origin` は、クローン元のリモートリポジトリに自動で付けられる既定の名前です。`git remote -v` で登録されているリモートとURLを確認できます。"
+    "explanation": "`origin` は、クローン元のリモートリポジトリに自動で付けられる既定の名前です。`git remote -v` で登録されているリモートとURLを確認できます。",
+    "figure": "fetch-pull"
   },
   {
     "id": "gh900-d1-017",
@@ -274,7 +284,8 @@
     "answer": [
       0
     ],
-    "explanation": "`HEAD` は「今どこを見ているか」を示す参照で、通常は現在のブランチの最新コミットを指します。ブランチを切り替えると `HEAD` の指す先も変わります。"
+    "explanation": "`HEAD` は「今どこを見ているか」を示す参照で、通常は現在のブランチの最新コミットを指します。ブランチを切り替えると `HEAD` の指す先も変わります。",
+    "figure": "branch-merge"
   },
   {
     "id": "gh900-d1-019",
@@ -289,7 +300,8 @@
     "answer": [
       0
     ],
-    "explanation": "`git fetch` はリモートの更新をダウンロードするだけで、作業中のブランチには統合しません。内容を確認してから `git merge` などで取り込めます。`git pull` は取得と統合を一度に行います。"
+    "explanation": "`git fetch` はリモートの更新をダウンロードするだけで、作業中のブランチには統合しません。内容を確認してから `git merge` などで取り込めます。`git pull` は取得と統合を一度に行います。",
+    "figure": "fetch-pull"
   },
   {
     "id": "gh900-d1-020",
@@ -320,7 +332,8 @@
       0,
       1
     ],
-    "explanation": "Gitの変更は「ワーキングディレクトリで編集」→「`git add` でステージングエリアへ」→「`git commit` でリポジトリ（`.git` ディレクトリ）に記録」という3つの領域を流れます。"
+    "explanation": "Gitの変更は「ワーキングディレクトリで編集」→「`git add` でステージングエリアへ」→「`git commit` でリポジトリ（`.git` ディレクトリ）に記録」という3つの領域を流れます。",
+    "figure": "areas"
   },
   {
     "id": "gh900-d1-022",
@@ -398,7 +411,8 @@
       1
     ],
     "explanation": "フォークはGitHub上で自分のアカウント（またはOrganization）にリポジトリのコピーを作る操作です。書き込み権限のないオープンソースプロジェクトに貢献するとき、フォークで変更してから元のリポジトリへPull Requestを送ります。",
-    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks"
+    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks",
+    "figure": "fork-pr"
   },
   {
     "id": "gh900-d2-005",
@@ -505,7 +519,8 @@
       0
     ],
     "explanation": "Pull Requestは「このブランチの変更を取り込んでください」という提案です。差分の確認、コメント、レビュー、CIのチェックを経てマージします。バグ報告には通常Issueを使います。",
-    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests"
+    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests",
+    "figure": "github-flow"
   },
   {
     "id": "gh900-d3-002",
@@ -632,7 +647,8 @@
     "answer": [
       0
     ],
-    "explanation": "マージ方法は3種類あります。「Create a merge commit」はマージコミットを作ってすべてのコミットを残し、「Squash and merge」は1つのコミットにまとめ、「Rebase and merge」はマージコミットを作らずにコミットを付け替えて取り込みます。"
+    "explanation": "マージ方法は3種類あります。「Create a merge commit」はマージコミットを作ってすべてのコミットを残し、「Squash and merge」は1つのコミットにまとめ、「Rebase and merge」はマージコミットを作らずにコミットを付け替えて取り込みます。",
+    "figure": "merge-methods"
   },
   {
     "id": "gh900-d3-010",
@@ -1233,6 +1249,7 @@
     "answer": [
       0
     ],
-    "explanation": "書き込み権限のないプロジェクトには、フォークしたリポジトリで変更し、Pull Requestで提案するのが基本です。事前に `CONTRIBUTING.md` を読み、関連するIssueがあればそこで方針を相談するとスムーズです。"
+    "explanation": "書き込み権限のないプロジェクトには、フォークしたリポジトリで変更し、Pull Requestで提案するのが基本です。事前に `CONTRIBUTING.md` を読み、関連するIssueがあればそこで方針を相談するとスムーズです。",
+    "figure": "fork-pr"
   }
 ]

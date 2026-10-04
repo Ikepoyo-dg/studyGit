@@ -17,7 +17,7 @@ const MAX_MOCKS = 50;
 const MIGRATIONS = {};
 
 function empty() {
-  return { version: VERSION, exam: null, records: {}, mocks: [] };
+  return { version: VERSION, exam: null, records: {}, mocks: [], notes: [] };
 }
 
 function migrate(d) {
@@ -29,7 +29,7 @@ function migrate(d) {
     v = d.version;
   }
   if (v > VERSION) throw new Error(`新しい形式（バージョン${v}）のデータです`);
-  return { ...empty(), ...d, records: d.records || {}, mocks: d.mocks || [] };
+  return { ...empty(), ...d, records: d.records || {}, mocks: d.mocks || [], notes: d.notes || [] };
 }
 
 function rescue(raw, reason) {
@@ -96,6 +96,24 @@ export const mocks = (examId) => db.mocks.filter((m) => m.exam === examId);
 export function addMock(m) {
   db.mocks.push(m);
   if (db.mocks.length > MAX_MOCKS) db.mocks.splice(0, db.mocks.length - MAX_MOCKS);
+  save();
+}
+
+// ---- 用語メモ ----
+// notes = [{ id, exam, qid, term, memo, done, t }]
+export const notes = (examId) => db.notes.filter((n) => !examId || n.exam === examId).slice().sort((a, b) => b.t - a.t);
+export function addNote({ exam, qid = null, term, memo = '' }) {
+  const n = { id: `n${Date.now()}${Math.random().toString(36).slice(2, 6)}`, exam, qid, term, memo, done: false, t: Date.now() };
+  db.notes.push(n);
+  save();
+  return n;
+}
+export function updateNote(id, patch) {
+  const n = db.notes.find((x) => x.id === id);
+  if (n) { Object.assign(n, patch); save(); }
+}
+export function deleteNote(id) {
+  db.notes = db.notes.filter((x) => x.id !== id);
   save();
 }
 
