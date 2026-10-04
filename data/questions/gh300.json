@@ -1,0 +1,568 @@
+[
+  {
+    "id": "gh300-c1-001",
+    "domain": "c1",
+    "question": "GitHub Copilotなどの生成AIが出力するコードについて、最も適切な考え方はどれですか？",
+    "choices": [
+      "もっともらしいが誤ったコードを含むことがあるため、レビューやテストで検証してから採用する",
+      "学習済みモデルの出力なので常に正しく、確認は不要",
+      "コンパイルが通れば正しいと判断してよい",
+      "公式ドキュメントより常に信頼できる"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "生成AIは確率的に「もっともらしい」出力を作るため、存在しないAPIを使ったり（ハルシネーション）、ロジックの誤りや脆弱性を含んだりすることがあります。人間によるレビュー、テスト、セキュリティスキャンでの検証が欠かせません。",
+    "ref": "https://docs.github.com/ja/copilot/responsible-use"
+  },
+  {
+    "id": "gh300-c1-002",
+    "domain": "c1",
+    "question": "Copilotが提案したコードを採用した場合、そのコードの品質と安全性に責任を持つのは誰ですか？",
+    "choices": [
+      "提案を受け入れてコードに組み込んだ開発者（とそのチーム）",
+      "GitHub社",
+      "AIモデル自身",
+      "学習データの元になったコードの作者"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilotはあくまで支援ツールで、最終的な判断と責任はコードを採用した開発者にあります。自分で書いたコードと同様に、レビュー、テスト、ライセンスやセキュリティの確認を行いましょう。"
+  },
+  {
+    "id": "gh300-c1-003",
+    "domain": "c1",
+    "question": "Microsoftの責任あるAIの原則に含まれるものを2つ選んでください。",
+    "choices": [
+      "公平性（Fairness）",
+      "透明性（Transparency）",
+      "収益の最大化",
+      "処理速度の最優先"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Microsoftの責任あるAIの原則は、公平性、信頼性と安全性、プライバシーとセキュリティ、包括性、透明性、説明責任の6つです。",
+    "ref": "https://www.microsoft.com/ja-jp/ai/responsible-ai"
+  },
+  {
+    "id": "gh300-c1-004",
+    "domain": "c1",
+    "question": "生成AIにおけるバイアスのリスクの説明として正しいものはどれですか？",
+    "choices": [
+      "学習データに含まれる偏りが、出力に反映される可能性がある",
+      "AIは学習データの影響を受けないため、偏りは生じない",
+      "バイアスはUIの表示言語を変えればなくなる",
+      "バイアスはコード生成には関係しない"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "モデルは学習データのパターンを反映するため、データの偏り（特定の書き方や古い慣習、偏った表現など）が出力に現れる可能性があります。出力を批判的に評価し、多様な観点でレビューすることが大切です。"
+  },
+  {
+    "id": "gh300-c1-005",
+    "domain": "c1",
+    "question": "Copilotが生成したコードに脆弱性が含まれるリスクを減らす方法として、最も適切なものはどれですか？",
+    "choices": [
+      "コードレビューに加えて、コードスキャンなどのセキュリティツールで検証する",
+      "提案をすべてそのまま受け入れ、リリース後に問題があれば直す",
+      "Copilotの提案は脆弱性を含まないので対策は不要",
+      "提案の文字数が短いものだけを採用する"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "AIの提案にもSQLインジェクションや不適切な入力検証などの問題が含まれることがあります。人によるレビューに加え、CodeQLによるコードスキャンや依存関係のチェックなど、通常の安全な開発プロセスに組み込んで検証します。"
+  },
+  {
+    "id": "gh300-c1-006",
+    "domain": "c1",
+    "question": "Copilot Chatを安全に使うための行動として、最も適切なものはどれですか？",
+    "choices": [
+      "パスワードやAPIキーなどの機密情報をプロンプトに含めない",
+      "本番環境の認証情報を貼り付けて、設定ファイルの作成を頼む",
+      "顧客の個人情報を含むデータをそのまま貼り付けて分析させる",
+      "社外秘の情報であっても、AIなら問題ないので共有する"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "プロンプトに含めた内容はサービスに送信されます。シークレットや個人情報は含めず、ダミー値や伏せ字を使いましょう。組織のポリシーにも従って利用します。"
+  },
+  {
+    "id": "gh300-c2-001",
+    "domain": "c2",
+    "question": "VS CodeでCopilotのインライン提案（グレーで表示される候補）を受け入れる標準のキーはどれですか？",
+    "choices": [
+      "Tab",
+      "Esc",
+      "Enter",
+      "F5"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "インライン提案はTabキーで受け入れ、Escキーで却下します。単語単位で受け入れるショートカットや、別の候補を表示するショートカットもあります。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/getting-code-suggestions-in-your-ide-with-github-copilot"
+  },
+  {
+    "id": "gh300-c2-002",
+    "domain": "c2",
+    "question": "Copilot Chatで、選択したコードが何をしているかの説明を求めるスラッシュコマンドはどれですか？",
+    "choices": [
+      "`/explain`",
+      "`/tests`",
+      "`/fix`",
+      "`/new`"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "`/explain` は選択したコードの説明、`/tests` はテストの生成、`/fix` は問題の修正案、`/new` は新しいプロジェクトの雛形作成に使います。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/copilot-chat/github-copilot-chat-cheat-sheet"
+  },
+  {
+    "id": "gh300-c2-003",
+    "domain": "c2",
+    "question": "VS CodeのCopilot Chatで、開いているワークスペース全体を文脈として質問したいときに使うチャット参加者（@メンション）はどれですか？",
+    "choices": [
+      "`@workspace`",
+      "`@terminal`",
+      "`@github`",
+      "`@vscode`"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "`@workspace` はワークスペース内のコードを文脈として回答します。`@terminal` はターミナルに関する質問、`@vscode` はVS Code自体の使い方の質問に使います。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/copilot-chat/github-copilot-chat-cheat-sheet"
+  },
+  {
+    "id": "gh300-c2-004",
+    "domain": "c2",
+    "question": "IDEにおけるCopilotのエージェントモード（Agent mode）の説明として正しいものはどれですか？",
+    "choices": [
+      "タスクに応じて関連ファイルを判断して複数ファイルを編集し、コマンドの実行やエラーの修正を繰り返しながら作業を進める",
+      "1行ずつの補完だけを行うモード",
+      "インターネット接続なしで動作するオフラインモード",
+      "コードを読むだけで変更はできないモード"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "エージェントモードは、指示されたタスクを達成するために、編集するファイルを自分で判断し、ターミナルコマンドの実行を提案し、結果やエラーを見ながら反復します。変更内容とコマンド実行はユーザーが確認・承認できます。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/asking-github-copilot-questions-in-your-ide"
+  },
+  {
+    "id": "gh300-c2-005",
+    "domain": "c2",
+    "question": "Model Context Protocol（MCP）の説明として正しいものはどれですか？",
+    "choices": [
+      "外部のツールやデータソースをAIモデルに接続し、文脈や機能を提供するためのオープンな標準",
+      "Copilotの料金プランの名称",
+      "Gitの新しいマージ方式",
+      "GitHubのアカウントの種類"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "MCPはAIアプリケーションと外部ツール・データをつなぐためのオープンなプロトコルです。CopilotでMCPサーバーを設定すると、エージェントがIssueの取得やデータベースの参照などの外部機能を使えるようになります。",
+    "ref": "https://docs.github.com/ja/copilot/customizing-copilot/extending-copilot-chat-with-mcp"
+  },
+  {
+    "id": "gh300-c2-006",
+    "domain": "c2",
+    "question": "IssueをCopilotに割り当てると、バックグラウンドで作業を進めて変更を提案するPull Requestを作成する機能はどれですか？",
+    "choices": [
+      "Copilot cloud agent（旧称: Copilot coding agent）",
+      "インライン提案",
+      "GitHub Pages",
+      "Dependabot"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilot cloud agent（以前はCopilot coding agentと呼ばれていました）は、GitHub Actionsで動く環境上でバックグラウンドで自律的に調査・計画・コード変更を行い、ブランチへのコミットやPull Requestの作成まで進めます。開発者はPRをレビューし、コメントでフィードバックして修正を依頼できます。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/coding-agent/about-assigning-tasks-to-copilot"
+  },
+  {
+    "id": "gh300-c2-007",
+    "domain": "c2",
+    "question": "GitHub.com上でPull Requestを作成するときに、Copilotが支援できることとして正しいものはどれですか？",
+    "choices": [
+      "変更内容をもとにPRの概要（サマリー）を生成する",
+      "レビューなしでPRを強制マージする",
+      "ブランチ保護ルールを無効化する",
+      "PRの作成者を別のユーザーに変更する"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "CopilotはPRの差分を分析し、変更の概要や主な変更点を説明文として生成できます。生成された内容は必ず確認し、必要に応じて修正します。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/creating-a-pull-request-summary-with-github-copilot"
+  },
+  {
+    "id": "gh300-c2-008",
+    "domain": "c2",
+    "question": "Organizationのメンバーにシート（ライセンス）を割り当て、Copilotの機能をポリシーで一元管理できるプランはどれですか？",
+    "choices": [
+      "Copilot Business",
+      "Copilot Free",
+      "Copilot Pro",
+      "Copilot Pro+"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilot Business（とCopilot Enterprise）はOrganizationやEnterprise向けのプランで、管理者がシートの割り当て、機能やモデルの有効化、パブリックコードと一致する提案の扱いなどのポリシーを設定できます。Free、Pro、Pro+は個人向けのプランです。",
+    "ref": "https://docs.github.com/ja/copilot/about-github-copilot/plans-for-github-copilot"
+  },
+  {
+    "id": "gh300-c2-009",
+    "domain": "c2",
+    "question": "ターミナルの中でCopilotと対話しながら、コードの変更やコマンドの実行を任せられるツールはどれですか？",
+    "choices": [
+      "GitHub Copilot CLI",
+      "GitHub Desktop",
+      "GitHub Pages",
+      "GitHub Sponsors"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "GitHub Copilot CLIはターミナルでCopilotを使うためのツールで、対話型のセッションでファイルの編集やコマンドの実行をCopilotに依頼できます。実行前にはユーザーの承認を求めます。",
+    "ref": "https://docs.github.com/ja/copilot/concepts/agents/about-copilot-cli"
+  },
+  {
+    "id": "gh300-c2-010",
+    "domain": "c2",
+    "question": "コード、ドキュメント、メモなど関連する情報をまとめて登録し、それをもとにCopilotに回答させるための機能はどれですか？",
+    "choices": [
+      "Copilot Spaces",
+      "GitHub Gist",
+      "Releases",
+      "Codespaces"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilot Spacesは、特定のタスクやプロジェクトに必要なコンテキスト（リポジトリのファイル、Issue、ドキュメント、メモなど）をまとめ、チームで共有しながらCopilotの回答に使える機能です。名前が似ているCodespacesはクラウド開発環境なので区別しましょう。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/copilot-spaces/about-organizing-and-sharing-context-with-copilot-spaces"
+  },
+  {
+    "id": "gh300-c3-001",
+    "domain": "c3",
+    "question": "インライン提案が生成されるまでの流れとして、最も適切な順番はどれですか？",
+    "choices": [
+      "IDEで文脈を収集 → プロンプトを構築 → プロキシでフィルタリング → LLMが生成 → 後処理・フィルタリング → IDEに提示",
+      "LLMが生成 → IDEで文脈を収集 → プロンプトを構築 → IDEに提示",
+      "IDEに提示 → LLMが生成 → プロンプトを構築",
+      "プロキシでフィルタリング → IDEに提示 → LLMが生成"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilotは、カーソル周辺のコードや開いているファイルなどから文脈を集めてプロンプトを作り、GitHubのプロキシを経由してLLMに送ります。生成結果はコード品質や有害な内容、パブリックコードとの一致などのチェックを経てから表示されます。"
+  },
+  {
+    "id": "gh300-c3-002",
+    "domain": "c3",
+    "question": "インライン提案を生成するときに、Copilotが文脈として利用する情報を2つ選んでください。",
+    "choices": [
+      "カーソルの前後にあるコード",
+      "エディタで開いている関連ファイル",
+      "PC内のすべてのファイル（開いていないものも含む）",
+      "ほかのユーザーのprivateリポジトリ"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "インライン提案では、編集中のファイルのカーソル前後のコード、開いているタブの関連ファイル、ファイル名や言語などが主な文脈になります。関連するファイルを開き、関係ないファイルを閉じておくと提案の質が上がります。"
+  },
+  {
+    "id": "gh300-c3-003",
+    "domain": "c3",
+    "question": "Copilot BusinessやCopilot Enterpriseを使っている組織のデータの扱いとして、正しいものはどれですか？",
+    "choices": [
+      "利用者のプロンプトや提案などのデータは、GitHubのモデルの学習には使われない",
+      "すべてのコードが公開データセットとして共有される",
+      "プロンプトは誰でも閲覧できる",
+      "privateリポジトリのコードが他社への提案にそのまま使われる"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "GitHubは、Copilot BusinessやCopilot Enterpriseの利用データ（プロンプト、提案、コードスニペット）をモデルの学習に使わないとしています。データの保持期間や扱いは機能（IDE、チャットなど）によって異なるため、GitHub Copilot Trust Centerで確認しましょう。",
+    "ref": "https://copilot.github.trust.page/"
+  },
+  {
+    "id": "gh300-c3-004",
+    "domain": "c3",
+    "question": "LLMの「コンテキストウィンドウ」に関する説明として正しいものはどれですか？",
+    "choices": [
+      "モデルが一度に処理できる入力・出力の量には上限があり、すべてのコードを文脈に含められるわけではない",
+      "コンテキストウィンドウはエディタの画面サイズのことである",
+      "コンテキストウィンドウには上限がなく、リポジトリ全体を常に読み込める",
+      "コンテキストウィンドウが大きいほど回答は必ず正確になる"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "LLMが一度に扱えるトークン数には上限があります。そのためCopilotは関連性の高い情報を選んでプロンプトに含めます。必要なファイルを明示したり、質問を絞ったりすることで、限られた文脈を有効に使えます。"
+  },
+  {
+    "id": "gh300-c3-005",
+    "domain": "c3",
+    "question": "同じプロンプトを入力しても、Copilotの提案が毎回同じになるとは限らない理由として、最も適切なものはどれですか？",
+    "choices": [
+      "LLMは次に来るトークンを確率的に予測して出力を生成するため",
+      "Copilotがランダムに過去のユーザーの回答を返しているため",
+      "IDEのテーマ設定によって出力が変わるため",
+      "提案は毎回人間のオペレーターが書いているため"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "LLMは確率分布に基づいて次のトークンを選ぶため、同じ入力でも出力が変わることがあります。文脈（開いているファイル、カーソル位置など）の違いも結果に影響します。"
+  },
+  {
+    "id": "gh300-c4-001",
+    "domain": "c4",
+    "question": "few-shotプロンプティングの説明として正しいものはどれですか？",
+    "choices": [
+      "プロンプトの中にいくつかの入出力の例を示し、期待する形式や振る舞いをモデルに伝える",
+      "例を一切示さずに指示だけを与える",
+      "1文字だけのプロンプトを送る",
+      "同じプロンプトを何度も送信する"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "例を示さずに指示だけで依頼するのがzero-shot、いくつかの例を示すのがfew-shotです。few-shotは、出力の形式や命名規則などを揃えたいときに効果的です。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/prompt-engineering-for-github-copilot"
+  },
+  {
+    "id": "gh300-c4-002",
+    "domain": "c4",
+    "question": "Copilotから意図に合った回答を得るためのプロンプトとして、最も適切なものはどれですか？",
+    "choices": [
+      "「TypeScriptで、メールアドレスの形式を検証する関数を書いて。空文字はfalse、戻り値はboolean、正規表現を使い、テスト例も3つ付けて」",
+      "「関数を書いて」",
+      "「いい感じにして」",
+      "「全部直して」"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "良いプロンプトは、目的、使用言語、入力と出力、制約、例などを具体的に示します。あいまいな依頼ほど、意図と異なる結果になりやすくなります。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/prompt-engineering-for-github-copilot"
+  },
+  {
+    "id": "gh300-c4-003",
+    "domain": "c4",
+    "question": "インライン提案の質を高めるために、エディタ側でできる工夫として最も適切なものはどれですか？",
+    "choices": [
+      "関連するファイルを開き、関係のないファイルは閉じておく",
+      "ファイル名をすべて `a.txt` のような無意味な名前にする",
+      "コメントをすべて削除する",
+      "変数名を1文字に統一する"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilotは開いているファイルや周辺のコードを文脈にします。関連ファイルを開く、意味のある名前を付ける、意図を説明するコメントを書くといった工夫で、提案の精度が上がります。"
+  },
+  {
+    "id": "gh300-c4-004",
+    "domain": "c4",
+    "question": "関数を書き始める前に、その関数の上に処理内容をコメントで書いておくことの効果として、正しいものはどれですか？",
+    "choices": [
+      "コメントが文脈となり、意図に沿ったコードが提案されやすくなる",
+      "コメントがあるとCopilotは動作しなくなる",
+      "コメントは必ずそのままコードに変換され、誤りは起きない",
+      "コメントはCopilotの文脈には一切含まれない"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "目的、入力、出力、条件などをコメントで説明すると、Copilotはそれを手がかりに実装を提案します。ただし提案が正しいとは限らないため、内容の確認は必要です。"
+  },
+  {
+    "id": "gh300-c4-005",
+    "domain": "c4",
+    "question": "大きく複雑な機能をCopilotで実装するときの進め方として、最も適切なものはどれですか？",
+    "choices": [
+      "タスクを小さなステップに分け、1つずつ依頼して結果を確認しながら進める",
+      "すべての要件を1文に詰め込んで一度に依頼する",
+      "要件を伝えずに出力を待つ",
+      "エラーが出ても内容を確認せずに再生成を繰り返す"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "複雑な依頼は小さな単位に分けることで、各ステップの出力を検証しやすくなり、誤りの影響も小さくなります。チャットでは会話の流れを活かして段階的に改善できます。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/prompt-engineering-for-github-copilot"
+  },
+  {
+    "id": "gh300-c5-001",
+    "domain": "c5",
+    "question": "Copilotにユニットテストを生成させるときに、より有用なテストを得るための依頼方法として最も適切なものはどれですか？",
+    "choices": [
+      "正常系だけでなく、境界値や異常系（空の入力、null、大きな値など）も含めるよう明示する",
+      "「テスト」とだけ書く",
+      "テスト対象のコードを見せずに依頼する",
+      "生成されたテストは実行せずにそのままコミットする"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilotは `/tests` などでテストを生成できますが、どのケースを網羅したいかを明示すると質が上がります。生成されたテストは実行し、期待値が正しいかも確認します。"
+  },
+  {
+    "id": "gh300-c5-002",
+    "domain": "c5",
+    "question": "既存の読みにくいコードを改善するときのCopilotの活用方法として、適切なものはどれですか？",
+    "choices": [
+      "コードの説明を求めて理解したうえで、振る舞いを変えないリファクタリング案を提案させ、テストで確認する",
+      "コードを削除して最初から書き直させる",
+      "テストを無効化してから変更を加える",
+      "提案内容を確認せず本番環境に直接反映する"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilotはコードの解説、関数の分割、命名の改善などのリファクタリングを支援できます。振る舞いが変わっていないことをテストで確認しながら進めるのが安全です。"
+  },
+  {
+    "id": "gh300-c5-003",
+    "domain": "c5",
+    "question": "Copilotを使ってドキュメントの作成を効率化する例として、適切なものはどれですか？",
+    "choices": [
+      "関数のドキュメントコメント（docstringなど）やREADMEの下書きを生成させ、内容を確認して仕上げる",
+      "ドキュメントは不要なので書かない",
+      "コードと無関係な内容を自動で大量に生成させる",
+      "他社の製品マニュアルをそのまま複製させる"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilotはコードを読み取って、関数の説明、引数、戻り値などのドキュメントコメントや、READMEの構成案を作れます。正確さは人が確認します。"
+  },
+  {
+    "id": "gh300-c5-004",
+    "domain": "c5",
+    "question": "GitHubのコードスキャンで見つかったアラートに対して、AIが修正案を自動生成する機能はどれですか？",
+    "choices": [
+      "Copilot Autofix",
+      "Dependabotバージョンアップデート",
+      "GitHub Pages",
+      "Copilot Spaces"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilot Autofixは、CodeQLなどのコードスキャンで検出された脆弱性に対して、修正案と説明を生成します。開発者は提案を確認し、Pull Requestとして取り込めます。",
+    "ref": "https://docs.github.com/ja/code-security/code-scanning/managing-code-scanning-alerts/responsible-use-autofix-code-scanning"
+  },
+  {
+    "id": "gh300-c5-005",
+    "domain": "c5",
+    "question": "Copilotで開発の生産性が上がりやすい典型的な作業として、最も適切なものはどれですか？",
+    "choices": [
+      "定型的なコード（ボイラープレート）、正規表現、テストデータの作成",
+      "ビジネス上の最終的な意思決定",
+      "セキュリティレビューを完全に代替すること",
+      "要件を確認せずに仕様を決めること"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "繰り返しの多い定型コード、正規表現、SQL、テストデータ、ほかの言語への変換などはCopilotが得意です。意思決定やセキュリティの最終判断は人が行います。"
+  },
+  {
+    "id": "gh300-c6-001",
+    "domain": "c6",
+    "question": "機密情報を含む特定のファイルやパスを、Copilotの提案やチャットの文脈として使わせないようにする機能はどれですか？",
+    "choices": [
+      "コンテンツ除外（Content exclusion）",
+      ".gitignore",
+      "ブランチ保護ルール",
+      "Issueテンプレート"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "コンテンツ除外を設定すると、指定したファイルやパスがCopilotの文脈に使われず、そのファイル内ではインライン提案も表示されなくなります。`.gitignore` はGitの追跡対象を制御するもので、Copilotの文脈は制御しません。 なお、コンテンツ除外はCopilot CLIやIDEのエージェントモードには適用されない点に注意が必要です。",
+    "ref": "https://docs.github.com/ja/copilot/managing-copilot/configuring-and-auditing-content-exclusion/excluding-content-from-github-copilot"
+  },
+  {
+    "id": "gh300-c6-002",
+    "domain": "c6",
+    "question": "Copilotのコンテンツ除外を設定できる立場として正しいものを2つ選んでください。",
+    "choices": [
+      "リポジトリの管理者（Admin）",
+      "Organizationのオーナー",
+      "リポジトリの閲覧権限（Read）だけを持つユーザー",
+      "リポジトリをスターしただけのユーザー"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "コンテンツ除外は、リポジトリの管理者、Organizationのオーナー、Enterpriseのオーナーが設定できます。Copilot BusinessまたはCopilot Enterpriseで利用できる機能です。",
+    "ref": "https://docs.github.com/ja/copilot/managing-copilot/configuring-and-auditing-content-exclusion/excluding-content-from-github-copilot"
+  },
+  {
+    "id": "gh300-c6-003",
+    "domain": "c6",
+    "question": "パブリックなコードと一致する提案を許可している場合に、一致したコードの参照元やライセンス情報を確認できる機能はどれですか？",
+    "choices": [
+      "コード参照（Code referencing）",
+      "シークレットスキャン",
+      "GitHub Sponsors",
+      "マイルストーン"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "パブリックコードと一致する提案を「許可」にしていると、コード参照によって一致したコードのリポジトリやライセンスの情報が表示されます。「ブロック」にすると、一致する提案自体が表示されなくなります。",
+    "ref": "https://docs.github.com/ja/copilot/using-github-copilot/finding-public-code-that-matches-github-copilot-suggestions"
+  },
+  {
+    "id": "gh300-c6-004",
+    "domain": "c6",
+    "question": "IDEでCopilotの提案がまったく表示されないときに、確認すべき項目を2つ選んでください。",
+    "choices": [
+      "Copilotが利用可能なアカウントでサインインしているか",
+      "編集中のファイルがコンテンツ除外の対象になっていないか",
+      "モニターの解像度が4K以上か",
+      "リポジトリにスターが付いているか"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "提案が出ないときは、サインイン状態とサブスクリプション、拡張機能が有効か、そのファイルや言語で無効化されていないか、コンテンツ除外の対象でないか、ネットワーク（プロキシなど）の問題がないかを確認します。",
+    "ref": "https://docs.github.com/ja/copilot/troubleshooting-github-copilot/troubleshooting-common-issues-with-github-copilot"
+  },
+  {
+    "id": "gh300-c6-005",
+    "domain": "c6",
+    "question": "組織として、パブリックなコードと一致するCopilotの提案を表示させたくない場合、どのように設定しますか？",
+    "choices": [
+      "Copilotのポリシーで、パブリックコードと一致する提案を「ブロック」に設定する",
+      "すべてのリポジトリをpublicにする",
+      "`.gitignore` にパブリックコードのURLを書く",
+      "Copilotのシートをすべて外す以外に方法はない"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilot BusinessやCopilot Enterpriseでは、管理者がポリシーで「Suggestions matching public code（パブリックコードと一致する提案）」をブロックまたは許可に設定できます。ブロックすると、GitHub上のパブリックなコードと一致する提案は表示されなくなります。",
+    "ref": "https://docs.github.com/ja/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies"
+  }
+]

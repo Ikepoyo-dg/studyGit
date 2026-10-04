@@ -1,0 +1,321 @@
+[
+  {
+    "id": "gh900-d1-001", "domain": "d1",
+    "question": "Gitの説明として最も適切なものはどれですか？",
+    "choices": ["分散型のバージョン管理システム", "GitHub社が提供するクラウドのホスティングサービス", "中央サーバーがないと履歴を参照できない集中型のバージョン管理システム", "コードを自動でビルド・デプロイするCI/CDツール"],
+    "answer": [0],
+    "explanation": "Gitはオープンソースの分散型バージョン管理システムです。各開発者のローカルに履歴を含む完全なリポジトリがあるため、オフラインでもコミットや履歴の参照ができます。GitHubはGitリポジトリをホストし、共同作業の機能を提供するプラットフォームです。",
+    "ref": "https://docs.github.com/ja/get-started/using-git/about-git"
+  },
+  {
+    "id": "gh900-d1-002", "domain": "d1",
+    "question": "GitとGitHubの関係として正しいものはどれですか？",
+    "choices": ["GitはGitHubがなければ使えない", "GitはローカルでもGit単体で使え、GitHubはGitリポジトリのホスティングと共同作業の機能を提供する", "GitHubはGitの別名である", "GitHubを使うとGitのコミット履歴は保存されない"],
+    "answer": [1],
+    "explanation": "Gitはローカルのパソコンだけでも動作するツールです。GitHubはGitリポジトリをインターネット上でホストし、Pull Request、Issue、Actionsなどの共同作業の機能を追加するサービスです。",
+    "ref": "https://docs.github.com/ja/get-started/start-your-journey/about-github-and-git"
+  },
+  {
+    "id": "gh900-d1-003", "domain": "d1",
+    "question": "`git add` コマンドの役割はどれですか？",
+    "choices": ["リモートリポジトリに変更を送信する", "作業ディレクトリの変更をステージングエリアに追加する", "新しいブランチを作成する", "コミット履歴を表示する"],
+    "answer": [1],
+    "explanation": "`git add` は変更を「次のコミットに含める候補」としてステージングエリア（インデックス）に登録します。その後 `git commit` で記録します。リモートへの送信は `git push`、履歴の表示は `git log` です。"
+  },
+  {
+    "id": "gh900-d1-004", "domain": "d1",
+    "question": "ステージングエリアにある変更を、メッセージ付きでリポジトリの履歴に記録するコマンドはどれですか？",
+    "choices": ["`git push`", "`git commit`", "`git stash`", "`git fetch`"],
+    "answer": [1],
+    "explanation": "`git commit -m \"メッセージ\"` でステージ済みの変更がスナップショットとして履歴に記録されます。`git push` はローカルのコミットをリモートへ送信、`git stash` は変更を一時退避、`git fetch` はリモートの更新を取得するコマンドです。"
+  },
+  {
+    "id": "gh900-d1-005", "domain": "d1",
+    "question": "Gitにおけるブランチの説明として正しいものはどれですか？",
+    "choices": ["リポジトリ全体のバックアップファイル", "ほかの作業に影響を与えずに変更を進めるための独立した作業ライン", "リモートサーバーの接続設定", "削除したファイルを保管する場所"],
+    "answer": [1],
+    "explanation": "ブランチは特定のコミットを指す軽量なポインタで、メインの作業ラインから分かれて独立して開発を進められます。作業が終わったらPull Requestなどを通じて元のブランチにマージします。"
+  },
+  {
+    "id": "gh900-d1-006", "domain": "d1",
+    "question": "リモートリポジトリの最新の変更を取得し、現在のブランチに統合（マージ）するコマンドはどれですか？",
+    "choices": ["`git fetch`", "`git pull`", "`git push`", "`git clone`"],
+    "answer": [1],
+    "explanation": "`git pull` は `git fetch`（取得）と `git merge`（統合）をまとめて行います。`git fetch` だけでは取得のみで、作業中のブランチは変更されません。"
+  },
+  {
+    "id": "gh900-d1-007", "domain": "d1",
+    "question": "`git clone` を実行すると何が起きますか？",
+    "choices": ["GitHub上で自分のアカウントにリポジトリのコピーが作られる", "リモートリポジトリの履歴を含む完全なコピーがローカルに作成される", "最新のファイルだけが履歴なしでダウンロードされる", "リモートリポジトリが削除される"],
+    "answer": [1],
+    "explanation": "`git clone` はリモートリポジトリをすべての履歴とブランチ情報を含めてローカルに複製し、元のリポジトリを `origin` というリモートとして登録します。GitHub上で自分のアカウントにコピーを作るのは「フォーク」です。"
+  },
+  {
+    "id": "gh900-d1-008", "domain": "d1",
+    "question": "GitHubのアカウントの種類として正しいものを2つ選んでください。",
+    "choices": ["個人アカウント（Personal account）", "Organizationアカウント", "ゲストアカウント", "ローカル管理者アカウント"],
+    "answer": [0, 1],
+    "explanation": "GitHubには個人アカウント、Organizationアカウント、Enterpriseアカウントがあります。Organizationは複数人で共有するアカウントで、メンバーやチームの権限を管理できます。個人アカウントは自分自身を表し、Organizationに参加することもできます。",
+    "ref": "https://docs.github.com/ja/get-started/learning-about-github/types-of-github-accounts"
+  },
+  {
+    "id": "gh900-d1-009", "domain": "d1",
+    "question": "`.gitignore` ファイルの目的はどれですか？",
+    "choices": ["特定のファイルやフォルダーをGitの追跡対象から除外する", "リポジトリへのアクセスを拒否するユーザーを指定する", "コミットメッセージのテンプレートを定義する", "削除されたファイルの一覧を保存する"],
+    "answer": [0],
+    "explanation": "`.gitignore` にパターンを書くと、ビルド成果物、ログ、`node_modules`、認証情報を含む設定ファイルなどを誤ってコミットしないよう、未追跡ファイルを無視できます。すでに追跡済みのファイルには効かない点に注意しましょう。",
+    "ref": "https://docs.github.com/ja/get-started/git-basics/ignoring-files"
+  },
+  {
+    "id": "gh900-d1-010", "domain": "d1",
+    "question": "マージコンフリクトが発生する典型的な状況はどれですか？",
+    "choices": ["2つのブランチで同じファイルの同じ箇所が異なる内容に変更された", "新しいファイルを追加した", "コミットメッセージが空だった", "リモートリポジトリがprivateだった"],
+    "answer": [0],
+    "explanation": "同じ行を異なるブランチで別々に変更すると、Gitはどちらを採用すべきか自動で判断できず、コンフリクトになります。ファイル内の `<<<<<<<` `=======` `>>>>>>>` の部分を手動で編集して解消し、コミットします。"
+  },
+  {
+    "id": "gh900-d1-011", "domain": "d1",
+    "question": "GitHub Flowの流れとして正しい順番はどれですか？",
+    "choices": ["ブランチ作成 → コミット → Pull Request作成 → レビュー → マージ", "マージ → ブランチ作成 → レビュー → コミット", "Pull Request作成 → ブランチ作成 → マージ → コミット", "mainに直接コミット → レビュー → ブランチ作成"],
+    "answer": [0],
+    "explanation": "GitHub Flowは、mainから作業用のブランチを作り、変更をコミットし、Pull Requestを作ってレビューを受け、承認後にmainへマージする軽量なワークフローです。マージ後は作業用ブランチを削除します。",
+    "ref": "https://docs.github.com/ja/get-started/using-github/github-flow"
+  },
+  {
+    "id": "gh900-d1-012", "domain": "d1",
+    "question": "GitHubのIssue、Pull Request、READMEなどで、見出しや箇条書きを書くために使われる記法はどれですか？",
+    "choices": ["Markdown", "YAML", "XML", "LaTeX"],
+    "answer": [0],
+    "explanation": "GitHubはGitHub Flavored Markdown（GFM）に対応しています。`#` で見出し、`-` で箇条書き、`- [ ]` でタスクリスト、`@ユーザー名` でメンション、`#番号` でIssueやPRへのリンクを書けます。YAMLはGitHub Actionsのワークフロー定義などで使われます。",
+    "ref": "https://docs.github.com/ja/get-started/writing-on-github"
+  },
+  {
+    "id": "gh900-d2-001", "domain": "d2",
+    "question": "リポジトリの `README.md` について正しいものはどれですか？",
+    "choices": ["リポジトリのトップページに表示され、プロジェクトの概要や使い方を伝える", "GitHubが自動生成し、ユーザーは編集できない", "ライセンスを定義するための専用ファイル", "コミット履歴を保存するファイル"],
+    "answer": [0],
+    "explanation": "READMEはリポジトリを訪れた人が最初に目にするファイルで、プロジェクトの目的、インストール方法、使い方、貢献方法などを書きます。ライセンスは通常 `LICENSE` ファイルで示します。"
+  },
+  {
+    "id": "gh900-d2-002", "domain": "d2",
+    "question": "GitHub Enterprise Cloudで、Enterpriseのメンバー全員は閲覧できるが外部には公開されないリポジトリの可視性はどれですか？",
+    "choices": ["public", "private", "internal", "protected"],
+    "answer": [2],
+    "explanation": "internalはEnterprise内のメンバーに公開される可視性で、組織をまたいだ社内でのコード共有（InnerSource）に向いています。publicはインターネット上の誰でも閲覧でき、privateは明示的にアクセス権を与えた人だけが閲覧できます。",
+    "ref": "https://docs.github.com/ja/repositories/creating-and-managing-repositories/about-repositories#about-repository-visibility"
+  },
+  {
+    "id": "gh900-d2-003", "domain": "d2",
+    "question": "テンプレートリポジトリから新しいリポジトリを作成した場合について、正しいものはどれですか？",
+    "choices": ["元のリポジトリのコミット履歴もすべて引き継がれる", "同じディレクトリ構成とファイルで、新しい履歴から始まるリポジトリが作られる", "元のリポジトリと常に自動同期される", "元のリポジトリのIssueやPull Requestもコピーされる"],
+    "answer": [1],
+    "explanation": "テンプレートから作成したリポジトリは、ファイルとフォルダー構成を引き継ぎつつ、コミット履歴は1つの新しいコミットから始まります。履歴を引き継ぎ、元のリポジトリへの貢献を前提とするのはフォークです。",
+    "ref": "https://docs.github.com/ja/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template"
+  },
+  {
+    "id": "gh900-d2-004", "domain": "d2",
+    "question": "フォーク（fork）の説明として正しいものはどれですか？",
+    "choices": ["ローカルにリポジトリをダウンロードすること", "他人のリポジトリのコピーを自分のアカウント上に作り、Pull Requestで元のリポジトリに貢献できるようにすること", "ブランチを削除すること", "2つのリポジトリを統合すること"],
+    "answer": [1],
+    "explanation": "フォークはGitHub上で自分のアカウント（またはOrganization）にリポジトリのコピーを作る操作です。書き込み権限のないオープンソースプロジェクトに貢献するとき、フォークで変更してから元のリポジトリへPull Requestを送ります。",
+    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks"
+  },
+  {
+    "id": "gh900-d2-005", "domain": "d2",
+    "question": "GitHubの「Releases」の説明として正しいものはどれですか？",
+    "choices": ["Gitのタグをもとに、リリースノートや配布ファイルを公開する機能", "リポジトリを削除する機能", "ブランチを自動でマージする機能", "Issueをまとめて閉じる機能"],
+    "answer": [0],
+    "explanation": "Releasesはタグ（例: `v1.0.0`）に紐づけて、変更点のリリースノートやバイナリなどのファイルを公開する機能です。利用者は特定のバージョンをダウンロードできます。",
+    "ref": "https://docs.github.com/ja/repositories/releasing-projects-on-github/about-releases"
+  },
+  {
+    "id": "gh900-d3-001", "domain": "d3",
+    "question": "Pull Requestの主な目的はどれですか？",
+    "choices": ["ブランチの変更を別のブランチに取り込む前に、差分を共有してレビュー・議論すること", "リモートリポジトリから最新の変更を取得すること", "リポジトリの所有者を変更すること", "バグを報告すること"],
+    "answer": [0],
+    "explanation": "Pull Requestは「このブランチの変更を取り込んでください」という提案です。差分の確認、コメント、レビュー、CIのチェックを経てマージします。バグ報告には通常Issueを使います。",
+    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests"
+  },
+  {
+    "id": "gh900-d3-002", "domain": "d3",
+    "question": "ドラフトPull Requestについて正しいものはどれですか？",
+    "choices": ["作業中であることを示し、「Ready for review」にするまでマージできない", "レビューなしで即座にマージされる", "リポジトリの管理者しか作成できない", "作成すると自動的にIssueに変換される"],
+    "answer": [0],
+    "explanation": "ドラフトPull Requestは、まだ作業中の変更を早めに共有したいときに使います。ドラフトの間はマージできず、コードオーナーへのレビュー依頼も自動では送られません。準備ができたら「Ready for review」に切り替えます。",
+    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#draft-pull-requests"
+  },
+  {
+    "id": "gh900-d3-003", "domain": "d3",
+    "question": "IssueとDiscussionsの使い分けとして最も適切なものはどれですか？",
+    "choices": ["Issueはバグや作業タスクの追跡、Discussionsは質問やアイデアなどのオープンな会話に使う", "Issueは雑談、Discussionsはバグ報告に使う", "どちらも同じ機能なので区別はない", "Discussionsはprivateリポジトリでしか使えない"],
+    "answer": [0],
+    "explanation": "Issueは具体的な作業（バグ修正、機能追加など）を追跡するのに向いています。Discussionsは、Q&A、アイデア募集、お知らせなど、作業として完結しない会話の場です。Discussionから必要に応じてIssueを作ることもできます。",
+    "ref": "https://docs.github.com/ja/discussions/collaborating-with-your-community-using-discussions/about-discussions"
+  },
+  {
+    "id": "gh900-d3-004", "domain": "d3",
+    "question": "Pull Requestがデフォルトブランチにマージされたときに、Issue #42を自動でクローズするには、PRの説明に何と書けばよいですか？",
+    "choices": ["`Closes #42`", "`Refs #42`", "`@42`", "`Issue: 42`"],
+    "answer": [0],
+    "explanation": "`close`、`fix`、`resolve` などのキーワード（`Closes #42`、`Fixes #42` など）をPRの説明に書くと、デフォルトブランチへのマージ時にIssueが自動でクローズされます。`#42` だけならリンクされるだけでクローズはされません。",
+    "ref": "https://docs.github.com/ja/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue"
+  },
+  {
+    "id": "gh900-d3-005", "domain": "d3",
+    "question": "`CODEOWNERS` ファイルの役割はどれですか？",
+    "choices": ["特定のファイルやディレクトリに変更があったとき、自動でレビュー依頼する担当者を定義する", "リポジトリの所有者を変更する", "コミットできるユーザーを制限する暗号化キーを保存する", "コードのライセンスを定義する"],
+    "answer": [0],
+    "explanation": "`CODEOWNERS` ファイル（`.github/`、ルート、`docs/` のいずれかに置く）にパスと担当者を書くと、該当ファイルを変更するPull Requestで担当者に自動でレビューが依頼されます。ブランチ保護と組み合わせると、コードオーナーの承認を必須にできます。",
+    "ref": "https://docs.github.com/ja/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners"
+  },
+  {
+    "id": "gh900-d3-006", "domain": "d3",
+    "question": "Pull Requestのレビューを送信するときに選べる種類を3つ選んでください。",
+    "choices": ["Comment", "Approve", "Request changes", "Reject and delete"],
+    "answer": [0, 1, 2],
+    "explanation": "レビューは「Comment（承認や差し戻しをせずにコメントのみ）」「Approve（承認）」「Request changes（マージ前に修正を求める）」の3種類から選びます。",
+    "ref": "https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews"
+  },
+  {
+    "id": "gh900-d4-001", "domain": "d4",
+    "question": "GitHub Actionsのワークフローファイルを置く場所と形式として正しいものはどれですか？",
+    "choices": ["`.github/workflows/` に置くYAMLファイル", "リポジトリのルートに置く `actions.json`", "`docs/` に置くMarkdownファイル", "GitHubの設定画面だけで定義し、ファイルは不要"],
+    "answer": [0],
+    "explanation": "GitHub Actionsのワークフローは `.github/workflows/` ディレクトリのYAMLファイルで定義します。`on:` でトリガー（push、pull_requestなど）、`jobs:` で実行内容を書きます。ビルド、テスト、デプロイなどを自動化できます。",
+    "ref": "https://docs.github.com/ja/actions/about-github-actions/understanding-github-actions"
+  },
+  {
+    "id": "gh900-d4-002", "domain": "d4",
+    "question": "GitHub Codespacesの説明として正しいものはどれですか？",
+    "choices": ["クラウド上で動く開発環境で、`devcontainer.json` で構成をカスタマイズできる", "GitHubのコードを検索するための機能", "ローカルPCにだけインストールできるIDE", "リポジトリ専用のチャットツール"],
+    "answer": [0],
+    "explanation": "Codespacesはクラウド上のコンテナで動く開発環境で、ブラウザやVS Codeから利用できます。`.devcontainer/devcontainer.json` で言語ランタイム、拡張機能、ツールなどを定義し、チーム全員が同じ環境で開発できます。",
+    "ref": "https://docs.github.com/ja/codespaces/overview"
+  },
+  {
+    "id": "gh900-d4-003", "domain": "d4",
+    "question": "リポジトリのページで `.`（ピリオド）キーを押すと開くgithub.devエディタについて、正しいものはどれですか？",
+    "choices": ["ブラウザ上の軽量エディタで、ターミナルは使えない", "有料のクラウド仮想マシンが起動する", "ローカルPCのVS Codeが自動で起動する", "コードを読むだけで編集やコミットはできない"],
+    "answer": [0],
+    "explanation": "github.devはブラウザだけで動く無料の軽量エディタで、ファイルの編集やコミットができます。ただしターミナルがなく、コードの実行やビルドはできません。それが必要ならCodespacesを使います。",
+    "ref": "https://docs.github.com/ja/codespaces/the-githubdev-web-based-editor"
+  },
+  {
+    "id": "gh900-d4-004", "domain": "d4",
+    "question": "InnerSourceの説明として正しいものはどれですか？",
+    "choices": ["オープンソース開発の手法やカルチャーを、組織内のソフトウェア開発に取り入れること", "ソースコードを社外に公開すること", "外部委託したコードを社内に戻すこと", "コードを暗号化して保管すること"],
+    "answer": [0],
+    "explanation": "InnerSourceは、透明性、誰でも貢献できるオープンな協働、再利用といったオープンソースのやり方を社内で実践することです。internalリポジトリなどを使って部署をまたいでコードを共有します。"
+  },
+  {
+    "id": "gh900-d4-005", "domain": "d4",
+    "question": "GitHub Copilotの説明として最も適切なものはどれですか？",
+    "choices": ["AIを使って、エディタ内でコードの提案やチャットでの支援を行う機能", "コードの脆弱性を必ずゼロにするセキュリティ製品", "リポジトリのバックアップサービス", "人間のレビュアーを自動で割り当てる機能"],
+    "answer": [0],
+    "explanation": "GitHub CopilotはAIを使った開発支援ツールで、入力中のコードの続きの提案、チャットでの質問応答、複数ファイルの編集などを行います。提案は誤りを含むことがあるため、開発者がレビューして採用します。"
+  },
+  {
+    "id": "gh900-d5-001", "domain": "d5",
+    "question": "GitHub Projectsで使えるレイアウト（ビュー）として正しくないものはどれですか？",
+    "choices": ["テーブル", "ボード", "ロードマップ", "ガントチャート専用のExcel出力"],
+    "answer": [3],
+    "explanation": "GitHub Projectsはテーブル、ボード（カンバン）、ロードマップの各レイアウトでIssueやPull Requestを管理できます。フィルター、並べ替え、グループ化をビューごとに保存できます。",
+    "ref": "https://docs.github.com/ja/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects"
+  },
+  {
+    "id": "gh900-d5-002", "domain": "d5",
+    "question": "期日のある目標に向けてIssueやPull Requestをまとめ、完了の進捗率を確認できる機能はどれですか？",
+    "choices": ["マイルストーン", "ラベル", "スター", "Wiki"],
+    "answer": [0],
+    "explanation": "マイルストーンはIssueやPull Requestをグループ化し、期日と完了率（クローズ済みの割合）を追跡できます。ラベルは種類や優先度などで分類するためのものです。",
+    "ref": "https://docs.github.com/ja/issues/using-labels-and-milestones-to-track-work/about-milestones"
+  },
+  {
+    "id": "gh900-d5-003", "domain": "d5",
+    "question": "GitHub Projectsで、スプリントのような繰り返しの期間を計画するために使うカスタムフィールドの種類はどれですか？",
+    "choices": ["Iteration（イテレーション）", "Text（テキスト）", "Number（数値）", "Single select（単一選択）"],
+    "answer": [0],
+    "explanation": "Iterationフィールドを使うと、期間の長さと開始日を決めて、1週間や2週間ごとの反復期間を作れます。アイテムを各イテレーションに割り当て、スプリント計画に使えます。",
+    "ref": "https://docs.github.com/ja/issues/planning-and-tracking-with-projects/understanding-fields/about-iteration-fields"
+  },
+  {
+    "id": "gh900-d6-001", "domain": "d6",
+    "question": "GitHubアカウントのセキュリティを高めるために最も推奨される設定はどれですか？",
+    "choices": ["2要素認証（2FA）を有効にする", "パスワードを短くして覚えやすくする", "リポジトリをすべてpublicにする", "メールアドレスを公開する"],
+    "answer": [0],
+    "explanation": "2要素認証（2FA）を有効にすると、パスワードが漏れても、認証アプリ、パスキー、セキュリティキーなどの2つ目の要素がなければサインインできません。GitHubはコードに貢献するユーザーに2FAを必須化しています。",
+    "ref": "https://docs.github.com/ja/authentication/securing-your-account-with-two-factor-authentication-2fa/about-two-factor-authentication"
+  },
+  {
+    "id": "gh900-d6-002", "domain": "d6",
+    "question": "リポジトリが利用している依存パッケージに既知の脆弱性が見つかったとき、通知する機能はどれですか？",
+    "choices": ["Dependabotアラート", "GitHub Pages", "Discussions", "Releases"],
+    "answer": [0],
+    "explanation": "Dependabotアラートは依存関係グラフとGitHub Advisory Databaseをもとに、脆弱なパッケージを通知します。Dependabotセキュリティアップデートを有効にすると、修正バージョンへ更新するPull Requestも自動で作成されます。",
+    "ref": "https://docs.github.com/ja/code-security/dependabot/dependabot-alerts/about-dependabot-alerts"
+  },
+  {
+    "id": "gh900-d6-003", "domain": "d6",
+    "question": "APIキーやトークンなどの認証情報が誤ってリポジトリにコミットされたことを検出する機能はどれですか？",
+    "choices": ["シークレットスキャン（Secret scanning）", "GitHub Projects", "Codespaces", "マイルストーン"],
+    "answer": [0],
+    "explanation": "シークレットスキャンはリポジトリ内の既知の形式のシークレットを検出してアラートを出します。プッシュ保護を有効にすると、シークレットを含むpushそのものをブロックできます。",
+    "ref": "https://docs.github.com/ja/code-security/secret-scanning/introduction/about-secret-scanning"
+  },
+  {
+    "id": "gh900-d6-004", "domain": "d6",
+    "question": "Organizationのリポジトリロールのうち、IssueやPull Requestの管理（ラベル付けや担当者の割り当てなど）はできるが、コードへの書き込み権限はないロールはどれですか？",
+    "choices": ["Read", "Triage", "Write", "Admin"],
+    "answer": [1],
+    "explanation": "リポジトリロールは権限の弱い順に Read → Triage → Write → Maintain → Admin です。Triageは、コードを変更せずにIssueやPRを整理する担当者向けのロールです。",
+    "ref": "https://docs.github.com/ja/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization"
+  },
+  {
+    "id": "gh900-d6-005", "domain": "d6",
+    "question": "mainブランチへのマージ前に、少なくとも1人の承認とステータスチェックの成功を必須にしたいとき、使う機能はどれですか？",
+    "choices": ["ブランチ保護ルール（またはルールセット）", ".gitignore", "GitHub Sponsors", "README"],
+    "answer": [0],
+    "explanation": "ブランチ保護ルールやルールセットを使うと、必要な承認数、ステータスチェック（CI）の成功、強制プッシュの禁止などを特定のブランチに設定できます。",
+    "ref": "https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches"
+  },
+  {
+    "id": "gh900-d6-006", "domain": "d6",
+    "question": "Organization内でメンバーをグループにまとめ、まとめてリポジトリ権限を与えたり `@org名/チーム名` でメンションしたりできる機能はどれですか？",
+    "choices": ["Teams（チーム）", "Forks", "Gists", "Labels"],
+    "answer": [0],
+    "explanation": "TeamsはOrganizationのメンバーをグループ化する機能です。チーム単位でリポジトリへのアクセス権を付与でき、メンションするとチーム全員に通知されます。入れ子のチーム（親子関係）も作れます。",
+    "ref": "https://docs.github.com/ja/organizations/organizing-members-into-teams/about-teams"
+  },
+  {
+    "id": "gh900-d7-001", "domain": "d7",
+    "question": "publicリポジトリにライセンスファイルがない場合について、正しいものはどれですか？",
+    "choices": ["既定の著作権が適用され、他者にはコードを使用・改変・再配布する権利が与えられない", "自動的にMITライセンスが適用される", "誰でも自由に商用利用できる", "GitHubがリポジトリを非公開にする"],
+    "answer": [0],
+    "explanation": "ライセンスがない場合、作者が権利を保持したままになり、他者は閲覧やフォーク（GitHubの利用規約の範囲）以外の利用権を持ちません。オープンソースとして利用してほしい場合は、MITやApache 2.0などのライセンスを明示しましょう。",
+    "ref": "https://docs.github.com/ja/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository"
+  },
+  {
+    "id": "gh900-d7-002", "domain": "d7",
+    "question": "オープンソースのメンテナーやプロジェクトを金銭的に支援できるGitHubの機能はどれですか？",
+    "choices": ["GitHub Sponsors", "GitHub Marketplace", "GitHub Pages", "GitHub Gist"],
+    "answer": [0],
+    "explanation": "GitHub Sponsorsを使うと、開発者やOrganizationに毎月または1回限りの支援ができます。リポジトリに `FUNDING.yml` を置くと「Sponsor」ボタンが表示されます。",
+    "ref": "https://docs.github.com/ja/sponsors/getting-started-with-github-sponsors/about-github-sponsors"
+  },
+  {
+    "id": "gh900-d7-003", "domain": "d7",
+    "question": "プロジェクトへの貢献方法（PRの出し方、コーディング規約など）をコントリビューターに伝えるためのファイルはどれですか？",
+    "choices": ["`CONTRIBUTING.md`", "`CODEOWNERS`", "`.gitignore`", "`FUNDING.yml`"],
+    "answer": [0],
+    "explanation": "`CONTRIBUTING.md` を置くと、IssueやPull Requestの作成時にリンクが表示され、貢献の手順を伝えられます。行動規範は `CODE_OF_CONDUCT.md`、セキュリティ報告の方法は `SECURITY.md` で示します。",
+    "ref": "https://docs.github.com/ja/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors"
+  },
+  {
+    "id": "gh900-d7-004", "domain": "d7",
+    "question": "初めてのコントリビューター向けに、取り組みやすいIssueを示すためによく使われるラベルはどれですか？",
+    "choices": ["`good first issue`", "`wontfix`", "`duplicate`", "`invalid`"],
+    "answer": [0],
+    "explanation": "`good first issue` ラベルが付いたIssueはGitHubの検索やリポジトリの「Contribute」ページで見つけやすく、新しい貢献者が参加するきっかけになります。`help wanted` もよく使われます。",
+    "ref": "https://docs.github.com/ja/communities/setting-up-your-project-for-healthy-contributions/encouraging-helpful-contributions-to-your-project-with-labels"
+  }
+]
