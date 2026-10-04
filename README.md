@@ -54,12 +54,19 @@ python3 -m http.server 8000
   "choices": ["選択肢A", "選択肢B", "選択肢C", "選択肢D"],
   "answer": [0],
   "explanation": "解説",
+  "choiceNotes": [
+    { "k": "o", "t": "正解の補足" },
+    { "k": "r", "t": "実在する別の概念の説明" },
+    { "k": "w", "t": "誤った説明である理由" },
+    { "k": "f", "t": "存在しない名称であること" }
+  ],
   "ref": "https://docs.github.com/ja/...",
   "figure": "fork-pr"
 }
 ```
 
 - `domain` は `data/exams.json` の分野ID
+- `choiceNotes` は選択肢ごとの解説（`choices` と同じ順番・同じ数）。`k` は `o`＝正解、`r`＝実在する別の概念、`w`＝誤った説明、`f`＝存在しない名称
 - `figure`（任意）は `js/figures.js` の図解ID。解説に図が表示されます
 - `answer` は正解の選択肢の番号（0始まり）。複数正解なら `[0, 2]` とし、問題文に「2つ選んでください」と書く
 - 追加したら `node scripts/validate.mjs --update-ids` でチェックし、公開済みID一覧（`data/published-ids.txt`）に追記

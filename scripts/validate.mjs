@@ -30,6 +30,11 @@ for (const ex of exams) {
     else if (new Set(q.answer).size !== q.answer.length) errors.push(`${where} answer が重複しています`);
     if (q.answer?.length > 1 && !/[2-9２-９]つ選/.test(q.question)) errors.push(`${where} 複数正解なのに「○つ選んで」の記載がありません`);
     if (!q.explanation?.trim()) errors.push(`${where} 解説が空です`);
+    if (!Array.isArray(q.choiceNotes) || q.choiceNotes.length !== q.choices.length) errors.push(`${where} choiceNotes（選択肢ごとの解説）の数が選択肢と一致しません`);
+    else q.choiceNotes.forEach((n, i) => {
+      if (!['o', 'r', 'w', 'f'].includes(n.k) || !n.t?.trim()) errors.push(`${where} choiceNotes[${i}] の形式が不正です`);
+      else if (q.answer?.includes(i) !== (n.k === 'o')) errors.push(`${where} choiceNotes[${i}] の正解区分（o）が answer と一致しません`);
+    });
     if (q.figure && !FIGURES[q.figure]) errors.push(`${where} 図解 ${q.figure} が js/figures.js にありません`);
     if (q.ref && !/^https:\/\//.test(q.ref)) errors.push(`${where} ref はhttpsのURLにしてください`);
   }

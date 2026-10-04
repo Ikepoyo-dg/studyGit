@@ -84,6 +84,28 @@ const weakBtn = (qid) =>
 const memoBtn = (qid = '') => `<button class="memo-btn" data-action="memo" data-id="${esc(qid)}" aria-label="用語をメモ">📝 メモ</button>`;
 const figBlock = (q) => (q.figure ? figureHtml(q.figure) : '');
 
+// 選択肢ごとの解説（正解／実在する別の概念／誤った説明／存在しない名称）
+const NOTE_KIND = {
+  o: ['ok', '正解'],
+  r: ['real', '実在する別の概念'],
+  w: ['wrong', '誤った説明'],
+  f: ['fake', '存在しない名称'],
+};
+function choiceNotesHtml(q, order = null, selected = null) {
+  if (!q.choiceNotes) return '';
+  const idx = order || q.choices.map((_, i) => i);
+  const rows = idx.map((i) => {
+    const n = q.choiceNotes[i];
+    if (!n) return '';
+    const [cls, lbl] = NOTE_KIND[n.k] || ['real', ''];
+    const mine = selected && selected.includes(i) ? '<span class="mine">あなたの回答</span>' : '';
+    return `<li class="cn ${cls}"><div class="cn-head"><span class="cn-badge ${cls}">${lbl}</span>${mine}</div>
+      <div class="cn-choice">${rich(q.choices[i])}</div><div class="cn-text">${rich(n.t)}</div></li>`;
+  }).join('');
+  return `<details class="cn-wrap" open><summary>選択肢ごとの解説</summary><ul class="cn-list">${rows}</ul>
+    <p class="mini muted">「実在する別の概念」は試験に出る可能性のある用語です。「誤った説明」「存在しない名称」はひっかけ用の選択肢です。</p></details>`;
+}
+
 // 「Claudeに質問」: 問題・正解・解説を入れた質問文つきで Claude を開く（自動送信はされない）
 const CLAUDE_URL = 'https://claude.ai/new?q=';
 const L = 'ABCDEFGH';
@@ -361,6 +383,7 @@ async function viewQuiz() {
     footer = `
       <div class="result ${item.correct ? 'ok' : 'ng'}">${item.correct ? '○ 正解' : '× 不正解'}</div>
       <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>
+        ${choiceNotesHtml(q, item.order, item.sel.map((di) => item.order[di]))}
         ${figBlock(q)}
         ${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}</div>
       <div class="row between"><span class="mini muted">この問題の履歴 ${dots(q.id, 8)}（${h.filter((x) => x.c).length}/${h.length}回正解）</span>${weakBtn(q.id)}</div>
@@ -461,6 +484,7 @@ async function viewSummary() {
         <p><b>あなたの回答:</b> ${yours.length ? yours.map(rich).join(' / ') : '（未回答）'}</p>
         <p><b>正解:</b> ${q.answer.map((a) => rich(q.choices[a])).join(' / ')}</p>
         <p class="explain-text">${rich(q.explanation)}</p>
+        ${choiceNotesHtml(q, it.order, it.sel.map((di) => it.order[di]))}
         ${figBlock(q)}
         <div class="row end">${askBtn(ex, q, it.sel.map((di) => it.order[di]))}${memoBtn(q.id)}${weakBtn(q.id)}</div>
       </details>`;
@@ -518,7 +542,7 @@ async function viewQuestion(ex, id) {
     <p class="mini muted">${esc(domainName(ex, q.domain))} ・ ${esc(q.id)}</p>
     <div class="question">${rich(q.question)}</div>
     <div class="choices">${q.choices.map((c, i) => `<div class="choice static ${q.answer.includes(i) ? 'right' : ''}"><span class="mark">${q.answer.includes(i) ? '✔' : ''}</span><span>${rich(c)}</span></div>`).join('')}</div>
-    <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>${figBlock(q)}${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}
+    <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>${choiceNotesHtml(q)}${figBlock(q)}${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}
       <div class="row">${askBtn(ex, q)}</div></div>
     <div class="row between"><span class="row">${weakBtn(q.id)}${memoBtn(q.id)}</span><button class="btn primary small" data-action="solve-one" data-id="${esc(q.id)}">この問題を解く</button></div>
     <h2>回答履歴</h2>
