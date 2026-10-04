@@ -182,6 +182,11 @@ fieldset.choices-inline { border: 0; padding: 0; margin: 12px 0; display: flex; 
 fieldset.choices-inline legend { font-weight: 700; margin-bottom: 6px; }
 fieldset.choices-inline label { display: flex; align-items: center; gap: 4px; min-height: 36px; }
 
+fieldset.choices-stack { border: 0; padding: 0; margin: 12px 0; display: grid; gap: 8px; }
+fieldset.choices-stack legend { font-weight: 700; margin-bottom: 6px; }
+fieldset.choices-stack label { display: flex; gap: 10px; align-items: center; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+fieldset.choices-stack label:has(input:checked) { border-color: var(--primary); background: var(--sel); }
+
 /* ---- Markdown ---- */
 .md h1 { font-size: 1.4rem; }
 .md h2 { font-size: 1.15rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 4px; }

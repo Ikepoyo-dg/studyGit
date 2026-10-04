@@ -222,44 +222,65 @@ async function viewWeak(ex) {
 // ================= 画面: 模擬試験の設定 =================
 async function viewMockSetup(ex) {
   const qs = await questionsOf(ex.id);
-  const opts = [...new Set([20, 40, qs.length].filter((n) => n <= qs.length))];
+  const opts = mockOptions(ex, qs);
   const recent = S.mocks(ex.id).slice(-5).reverse();
   $app.innerHTML = page('模擬試験', `
     <div class="card">
       <p>出題範囲の比重に合わせて問題を選びます。解答中は正誤を表示せず、最後にまとめて採点します。</p>
-      <fieldset class="choices-inline">
-        <legend>問題数</legend>
-        ${opts.map((n, i) => `<label><input type="radio" name="count" value="${n}" ${i === 0 ? 'checked' : ''}> ${n === qs.length ? `全問（${n}）` : `${n}問`}</label>`).join('')}
+      <fieldset class="choices-stack">
+        <legend>形式</legend>
+        ${opts.map((o, i) => `<label><input type="radio" name="mockopt" value="${i}" ${i === 0 ? 'checked' : ''}><span><b>${esc(o.label)}</b><br><span class="muted mini">${o.count}問・${o.minutes}分</span></span></label>`).join('')}
       </fieldset>
-      <p class="muted mini">制限時間は1問あたり約80秒（本番: ${ex.officialMinutes}分）。合格ラインは${ex.passScore}点/1000点として採点します。</p>
+      <p class="muted mini">本番の問題数は非公開のため、受験者の報告にもとづく目安です。合格ラインは${ex.passScore}点/1000点として採点します。</p>
       <button class="btn primary block" data-action="start-mock">開始する</button>
     </div>
     ${recent.length ? `<h2>最近の結果</h2>${recent.map((m) => `<div class="card qrow row between"><span>${fmtDate(m.date)}<br><span class="muted mini">${m.correct}/${m.total}問正解</span></span><b class="${m.score >= ex.passScore ? 'pass' : 'fail'}">${m.score}点</b></div>`).join('')}` : ''}
   `, { sub: ex.code });
 }
 
+// 模擬試験の形式（本番形式とハーフ）
+function mockOptions(ex, qs) {
+  const m = ex.mock || { count: 50, minutes: 100 };
+  const full = Math.min(m.count, qs.length);
+  const minutesFull = Math.round((m.minutes * full) / m.count);
+  const half = Math.ceil(full / 2);
+  return [
+    { label: '本番形式', count: full, minutes: minutesFull },
+    { label: 'ハーフ', count: half, minutes: Math.round((minutesFull * half) / full) },
+  ];
+}
+
 // ================= セッション開始 =================
-function startSession({ mode, title, qs, back = '/menu' }) {
+function startSession({ mode, title, qs, back = '/menu', timeLimitSec = 0 }) {
   if (!qs.length) return toast('対象の問題がありません');
   const ex = currentExam();
   const s = {
     exam: ex.id, mode, title, back,
     items: qs.map((q) => ({ id: q.id, order: shuffle(q.choices.map((_, i) => i)), sel: [], done: false, correct: null })),
     index: 0, startedAt: Date.now(), finished: false,
-    timeLimitSec: mode === 'mock' ? qs.length * 80 : 0,
+    timeLimitSec,
   };
   S.saveSession(s);
   go('/quiz');
 }
 
 function pickMockQuestions(ex, qs, count) {
-  const sumW = ex.domains.reduce((a, d) => a + d.w, 0);
+  // 分野の比重どおりに配分（最大剰余法で合計を count に合わせる）
   const pools = Object.fromEntries(ex.domains.map((d) => [d.id, shuffle(qs.filter((q) => q.domain === d.id))]));
-  const picked = [];
-  for (const d of ex.domains) picked.push(...pools[d.id].splice(0, Math.round((count * d.w) / sumW)));
+  const sumW = ex.domains.reduce((a, d) => a + d.w, 0);
+  const quota = ex.domains.map((d) => {
+    const exact = (count * d.w) / sumW;
+    return { id: d.id, n: Math.min(Math.floor(exact), pools[d.id].length), rest: exact - Math.floor(exact) };
+  });
+  let left = count - quota.reduce((a, q) => a + q.n, 0);
+  for (const q of [...quota].sort((a, b) => b.rest - a.rest)) {
+    if (left <= 0) break;
+    if (q.n < pools[q.id].length) { q.n++; left--; }
+  }
+  const picked = quota.flatMap((q) => pools[q.id].splice(0, q.n));
   const rest = shuffle(Object.values(pools).flat());
   while (picked.length < count && rest.length) picked.push(rest.pop());
-  return shuffle(picked.slice(0, count));
+  return shuffle(picked);
 }
 
 const isCorrect = (q, item) => {
@@ -541,8 +562,8 @@ async function onClick(e) {
     if (a === 'start-wrong') return startSession({ mode: 'practice', title: '前回まちがえた問題', qs: shuffle(qs.filter((q) => S.lastResult(q.id) === false)) });
     if (a === 'solve-one') return startSession({ mode: 'practice', title: '1問チャレンジ', qs: qs.filter((q) => q.id === id) });
     if (a === 'start-mock') {
-      const n = Number(document.querySelector('input[name="count"]:checked')?.value || 20);
-      return startSession({ mode: 'mock', title: `模擬試験（${n}問）`, qs: pickMockQuestions(ex, qs, n) });
+      const opt = mockOptions(ex, qs)[Number(document.querySelector('input[name="mockopt"]:checked')?.value || 0)];
+      return startSession({ mode: 'mock', title: `模擬試験 ${opt.label}（${opt.count}問）`, qs: pickMockQuestions(ex, qs, opt.count), timeLimitSec: opt.minutes * 60 });
     }
   }
 
