@@ -66,4 +66,6 @@ python3 -m http.server 8000
 2. リポジトリの Settings → Pages → Source を「Deploy from a branch」、Branch を `main` / `(root)` にする
 3. 表示されたURLをAndroidのChromeで開き、メニューから「ホーム画面に追加」
 
+ルートの `.nojekyll` は、GitHub Pagesが `.md` ファイルをHTMLに変換しないようにするためのファイルです（削除しないでください）。
+
 更新を反映するときは `sw.js` の `CACHE` の番号を上げてください（古いキャッシュが残るのを防ぎます）。

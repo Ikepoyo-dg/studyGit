@@ -473,8 +473,8 @@ async function viewQuestion(ex, id) {
 
 // ================= 画面: 試験ガイド =================
 async function viewGuide() {
-  const r = await fetch('content/exam-info.md');
-  const md = r.ok ? await r.text() : '# 読み込めませんでした';
+  const r = await fetch('content/exam-info.md').catch(() => null);
+  const md = r && r.ok ? await r.text() : `# 読み込めませんでした\n\n試験ガイドのファイルを取得できませんでした（${r ? r.status : '通信エラー'}）。通信できる状態で開き直してください。`;
   $app.innerHTML = page('試験ガイド', `<article class="md">${renderMarkdown(md)}</article>`);
 }
 

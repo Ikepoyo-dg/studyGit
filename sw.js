@@ -1,6 +1,6 @@
 // オフライン対応用 Service Worker
 // 方式: stale-while-revalidate（キャッシュを即返しつつ、裏で最新版を取得して次回に反映）
-const CACHE = 'git-study-v1';
+const CACHE = 'git-study-v2';
 const ASSETS = [
   './',
   'index.html',
