@@ -362,8 +362,7 @@ async function viewQuiz() {
       <div class="result ${item.correct ? 'ok' : 'ng'}">${item.correct ? '○ 正解' : '× 不正解'}</div>
       <div class="card explain"><b>解説</b><p>${rich(q.explanation)}</p>
         ${figBlock(q)}
-        ${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}
-        <div class="row">${askBtn(ex, q, item.sel.map((di) => item.order[di]))}</div></div>
+        ${q.ref ? `<a href="${esc(q.ref)}" target="_blank" rel="noopener" class="mini">参考ドキュメント ↗</a>` : ''}</div>
       <div class="row between"><span class="mini muted">この問題の履歴 ${dots(q.id, 8)}（${h.filter((x) => x.c).length}/${h.length}回正解）</span>${weakBtn(q.id)}</div>
       <button class="btn primary block" data-action="next">${s.index < s.items.length - 1 ? '次の問題へ ›' : '結果を見る'}</button>`;
   }
